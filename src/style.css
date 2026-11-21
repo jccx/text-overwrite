@@ -143,6 +143,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-
 .steps b { font-weight: 600; }
 .steps span { color: var(--muted); font-size: 13.5px; }
 .fine { margin: 12px 0 0; color: var(--muted); font-size: 12.5px; }
+#privUpdated { font-style: italic; }
 
 .edit { display: grid; gap: 12px; }
 .field { display: grid; gap: 4px; }

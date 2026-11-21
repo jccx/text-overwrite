@@ -16,7 +16,7 @@
    ===================================================================== */
 const I18N_LANG_KEY = 'overwrite.lang';
 /* when this build was made (UTC). Shown at the end of the privacy sheet in the reader's local time, to the minute. Update on every push, or the line goes stale. */
-const APP_BUILD_TIME = '2026-11-21T05:48:00Z';
+const APP_BUILD_TIME = '2026-11-21T05:51:00Z';
 function buildTimeLocal() {
   try { return new Date(APP_BUILD_TIME).toLocaleString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}); } catch (e) { return APP_BUILD_TIME; }
 }
