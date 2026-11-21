@@ -30,9 +30,11 @@
   --good: #17743f;
   --warn: #b91c1c;
   --font-ui: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* English interface: Aptos first (Microsoft/Office font; falls back where it is not installed) */
   --font-num: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --r: 8px;
 }
+html[lang="en"] { --font-ui: Aptos, "Segoe UI", system-ui, -apple-system, sans-serif; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #1b1d21; --card: #25282d; --ink: #eef0f3; --muted: #a3aab5; --line: #3b4048;
