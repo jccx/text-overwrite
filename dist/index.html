@@ -328,7 +328,7 @@ input[type="range"] { accent-color: var(--accent); min-width: 0; }
     </div>
     <div id="pager" class="zoom pager" role="group" data-i18n-aria="pagerAria" aria-label="Turn pages" hidden>
       <button type="button" id="pgPrev" data-i18n-aria="prevPage" aria-label="Previous page">‹</button>
-      <button type="button" id="pgNum" data-i18n-aria="goToPage" aria-label="Go to a page">1 / 1</button>
+      <button type="button" id="pgNum" data-i18n-aria="goToPage" aria-label="Go to a page">1/1</button>
       <button type="button" id="pgNext" data-i18n-aria="nextPage" aria-label="Next page">›</button>
     </div>
     <div id="dropHint" class="drop-hint" hidden data-i18n="dropHint">Release to open this image</div>
@@ -484,7 +484,7 @@ input[type="range"] { accent-color: var(--accent); min-width: 0; }
       <p id="saveNote" class="save-note" hidden>Please use the edited image lawfully; you are responsible for how it is used.</p>
       <div class="sheet-img"><img id="sheetImg" data-i18n-alt="savedImageAlt" alt="Edited image"></div>
       <div class="actions">
-        <button type="button" id="sheetShare" class="btn" hidden>Save to Photos / Share</button>
+        <button type="button" id="sheetShare" class="btn" hidden>Save to Photos/Share</button>
         <a id="sheetLink" class="btn" download>Download</a>
         <button type="button" id="sheetClose" class="btn primary" data-i18n="done">Done</button>
       </div>
@@ -3107,8 +3107,8 @@ const I18N = {
     "saveNoteImg": "Use the edited image lawfully; you are responsible for how it is used.",
     "saveNotePdf": "Use the edited file lawfully; you are responsible for how it is used.",
     "savedImageAlt": "Edited image",
-    "shareImage": "Save to Photos / Share",
-    "sharePdf": "Save to Files / Share",
+    "shareImage": "Save to Photos/Share",
+    "sharePdf": "Save to Files/Share",
     "downloadPdf": "Download PDF",
     "saveLeft": " Reminder: {left} more occurrence(s) of “{q}” still to change.",
     "reportSize": " ({size})",
@@ -3134,7 +3134,7 @@ const I18N = {
     "ocrRunningPage": "Recognising the image on page {n}…",
     "ocrNeedPic": "Recognise the text in the image once before searching it.",
     "ocrNeedPages": "Pages {pages} hold images or scans; recognise them once before searching.",
-    "findSearching": "Searching… checked {done} / {total} pages",
+    "findSearching": "Searching… checked {done}/{total} pages",
     "findNone": "No match for “{q}”.",
     "findNoneOcrHint": "Text in images and scanned pages needs recognising first: tap “Recognise text in images” below.",
     "findNoneUnreadable": "Text that cannot be recognised (handwriting, decorative type, too blurry) cannot be found, nor can phrases that run across lines.",
@@ -3142,7 +3142,7 @@ const I18N = {
     "findFoundTotal": "Total: {n} occurrences",
     "findFoundSoFar": "Found {n} so far",
     "findOnPages": " (on pages {pages})",
-    "findStillSearching": ", still checking {done} / {total} pages",
+    "findStillSearching": ", still checking {done}/{total} pages",
     "findAllUnchanged": " None changed yet.",
     "findChangedSome": " Changed {done} of {n}, {left} left.",
     "findAllChanged": " All changed.",
@@ -3152,10 +3152,10 @@ const I18N = {
     "enterOrig": "Type the original text and the font is matched automatically.",
     "noOrig": "No original text: size and position are estimated. Type it to match a font.",
     "loadingFonts": "Loading fonts…",
-    "loadingCand": "Loading candidate fonts {d} / {t}{slow}",
+    "loadingCand": "Loading candidate fonts {d}/{t}{slow}",
     "firstSlow": " (slow the first time)",
     "matchingFonts": "Matching fonts…",
-    "matchingPairs": "Matching Latin + CJK font pairs {d} / {t}",
+    "matchingPairs": "Matching Latin + CJK font pairs {d}/{t}",
     "noMatch": "No font could be matched. You can pick one by hand under “Fine-tune”.",
     "ocrDoubtFilled": "Read with low confidence; the closest result is filled in. Check and correct it.",
     "ocrDoubt": "Some characters may be wrong. Check the original text above.",
@@ -3379,8 +3379,8 @@ const I18N = {
     "saveNoteImg": "修改后的图片请合法使用，后果由使用者自负。",
     "saveNotePdf": "修改后的文件请合法使用，后果由使用者自负。",
     "savedImageAlt": "修改后的图片",
-    "shareImage": "存到相册 / 分享",
-    "sharePdf": "存到“文件” / 分享",
+    "shareImage": "存到相册/分享",
+    "sharePdf": "存到“文件”/分享",
     "downloadPdf": "下载 PDF",
     "saveLeft": " 提醒：查找的“{q}”还有 {left} 处没改。",
     "reportSize": "（{size}）",
@@ -3406,7 +3406,7 @@ const I18N = {
     "ocrRunningPage": "正在识别第 {n} 页的图片…",
     "ocrNeedPic": "图片里的字要先识别一次，才能查找。",
     "ocrNeedPages": "第 {pages} 页有图片或扫描内容，里面的字要先识别一次，才能查到。",
-    "findSearching": "正在查找… 已查 {done} / {total} 页",
+    "findSearching": "正在查找… 已查 {done}/{total} 页",
     "findNone": "没有找到“{q}”。",
     "findNoneOcrHint": "图片和扫描页里的字，要先点下面的“识别图片里的文字”。",
     "findNoneUnreadable": "识别不出来的字（手写、艺术字、太模糊的）查不到，跨行的词句也查不到。",
@@ -3414,7 +3414,7 @@ const I18N = {
     "findFoundTotal": "共 {n} 处",
     "findFoundSoFar": "已找到 {n} 处",
     "findOnPages": "（第 {pages} 页）",
-    "findStillSearching": "，还在查 {done} / {total} 页",
+    "findStillSearching": "，还在查 {done}/{total} 页",
     "findAllUnchanged": "都还没改。",
     "findChangedSome": "已改 {done} 处，还剩 {left} 处。",
     "findAllChanged": "全部改过了。",
@@ -3424,10 +3424,10 @@ const I18N = {
     "enterOrig": "输入原文字后，自动比对字体。",
     "noOrig": "没有原文字：大小和位置按旧字的外框估算。填上原文字可比对出字体。",
     "loadingFonts": "正在载入字体…",
-    "loadingCand": "正在载入候选字体 {d} / {t}{slow}",
+    "loadingCand": "正在载入候选字体 {d}/{t}{slow}",
     "firstSlow": "（首次较慢）",
     "matchingFonts": "正在比对字体…",
-    "matchingPairs": "正在比对中英文字体组合 {d} / {t}",
+    "matchingPairs": "正在比对中英文字体组合 {d}/{t}",
     "noMatch": "没能比对出字体，可以在“微调”里手动选。",
     "ocrDoubtFilled": "这段字读得没把握，已填上最接近的结果，请核对改正。",
     "ocrDoubt": "有的字可能读错了，请核对上面的原文字。",
@@ -5738,7 +5738,7 @@ function pdfPager() {
   el.hidden = !P;
   findRender();
   if (!P) return;
-  $('pgNum').textContent = P.cur + ' / ' + P.n;
+  $('pgNum').textContent = P.cur + '/' + P.n;
   $('pgPrev').disabled = P.cur <= 1; $('pgNext').disabled = P.cur >= P.n;
 }
 /* a plain picture takes the place of the PDF */

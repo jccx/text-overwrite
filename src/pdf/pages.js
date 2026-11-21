@@ -143,7 +143,7 @@ function pdfPager() {
   el.hidden = !P;
   findRender();
   if (!P) return;
-  $('pgNum').textContent = P.cur + ' / ' + P.n;
+  $('pgNum').textContent = P.cur + '/' + P.n;
   $('pgPrev').disabled = P.cur <= 1; $('pgNext').disabled = P.cur >= P.n;
 }
 /* a plain picture takes the place of the PDF */
