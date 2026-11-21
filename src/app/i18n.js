@@ -18,10 +18,10 @@ const I18N_LANG_KEY = 'overwrite.lang';
 const I18N = {
   "en": {
     "appTitle": "Text Overwrite",
-    "brandHtml": "Text <span class=\"mark-sel\">Overwrite</span>",
+    "brandHtml": "Text<br><span class=\"mark-sel\">Overwrite</span>",
     "langAria": "Switch language",
     "openImage": "Open image",
-    "openImagePdf": "Open image / PDF",
+    "openImagePdf": "Open image/PDF",
     "undo": "Undo",
     "save": "Save",
     "stageAria": "Image workspace",
@@ -293,7 +293,7 @@ const I18N = {
     "brandHtml": "查缺补<span class=\"mark-sel\">漏</span>",
     "langAria": "切换语言",
     "openImage": "打开图片",
-    "openImagePdf": "打开图片 / PDF",
+    "openImagePdf": "打开图片/PDF",
     "undo": "撤销",
     "save": "保存",
     "stageAria": "图片工作区",

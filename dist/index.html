@@ -63,9 +63,10 @@ body {
 /* left group: logo + language toggle; right group: the other three buttons */
 .bar-left { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 1 1 auto; }
 .bar-left .btn { flex: none; padding: 8px 10px; font-size: 13px; min-height: 34px; }
-.mark { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: .04em; white-space: nowrap; display: flex; align-items: center; flex: 0 1 auto; min-width: 0; }
+.mark { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: .04em; white-space: nowrap; display: block; text-align: left; line-height: 1.15; flex: 0 1 auto; min-width: 0; }
 /* the English logo is the long one, so it gets the smaller size */
 html[lang="en"] .mark { font-size: 15px; letter-spacing: .01em; }
+html[lang="en"] .mark-sel { margin-left: 0; display: inline-block; }
 .mark-sel {
   position: relative; margin-left: 3px; padding: 0 3px; color: var(--accent);
   outline: 1.5px solid var(--accent); outline-offset: 0;
@@ -2999,10 +3000,10 @@ const I18N_LANG_KEY = 'overwrite.lang';
 const I18N = {
   "en": {
     "appTitle": "Text Overwrite",
-    "brandHtml": "Text <span class=\"mark-sel\">Overwrite</span>",
+    "brandHtml": "Text<br><span class=\"mark-sel\">Overwrite</span>",
     "langAria": "Switch language",
     "openImage": "Open image",
-    "openImagePdf": "Open image / PDF",
+    "openImagePdf": "Open image/PDF",
     "undo": "Undo",
     "save": "Save",
     "stageAria": "Image workspace",
@@ -3274,7 +3275,7 @@ const I18N = {
     "brandHtml": "查缺补<span class=\"mark-sel\">漏</span>",
     "langAria": "切换语言",
     "openImage": "打开图片",
-    "openImagePdf": "打开图片 / PDF",
+    "openImagePdf": "打开图片/PDF",
     "undo": "撤销",
     "save": "保存",
     "stageAria": "图片工作区",

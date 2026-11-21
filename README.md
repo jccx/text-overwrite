@@ -19,7 +19,7 @@ Everything runs in the browser; images are never uploaded.
 
 ## PDF files
 
-Open a PDF the same way as an image (**打开图片 / PDF**). Each page is drawn as a picture and edited like one; on saving, the edits are written back into the PDF and everything else in the file is left as it was.
+Open a PDF the same way as an image (**打开图片/PDF**). Each page is drawn as a picture and edited like one; on saving, the edits are written back into the PDF and everything else in the file is left as it was.
 
 - **The original text comes from the PDF itself**, exactly, wherever the file carries text. Scans and text inside form fields or notes are read from the picture by the built-in reader instead.
 - **The file's own fonts are used for the new text** whenever they contain every character it needs. The result then matches the old text exactly. Fonts inside a PDF are usually cut down to the characters the document uses, so when a character is missing (the app says which), the closest font from the library draws the whole new text instead; the font names in the PDF guide that choice.
