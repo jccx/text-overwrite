@@ -15,12 +15,14 @@ const MODULES = [
   'image/pixels.js', 'image/analyze.js', 'image/typeset.js', 'image/fontfit.js',
   'reader/models.js', 'reader/classify.js', 'reader/line.js', 'reader/variants.js', 'reader/read.js',
   'pdf/core.js',
-  'app/util.js', 'app/state.js', 'app/families.js', 'app/webfonts.js', 'app/view.js', 'app/panel.js', 'app/load.js', 'app/edit.js', 'app/layout.js', 'app/apply.js', 'app/match.js',
+  'app/util.js', 'app/i18n.js', 'app/state.js', 'app/families.js', 'app/webfonts.js', 'app/view.js', 'app/panel.js', 'app/load.js', 'app/edit.js', 'app/layout.js', 'app/apply.js', 'app/match.js',
   'app/inputs.js', 'app/read.js', 'app/pointer.js', 'app/controls.js', 'app/save.js', 'app/shortcuts.js', 'app/offline.js', 'app/find.js', 'app/demo.js',
   'pdf/libs.js', 'pdf/pages.js', 'pdf/fonts.js', 'pdf/edit.js', 'pdf/write.js', 'pdf/build.js', 'pdf/save.js',
   'app/main.js'
 ];
-const FINE_PAGES = '双指缩放和移动图片；电脑上滚轮缩放，按住空格拖动。图片只在你的设备上处理，不会上传。原文字由页面自带的识别读出：常见的黑体、宋体和英文印刷体能读，手写体、艺术字读不准时请手动输入。也可以打开 PDF：一页一页地改，原文字直接取自 PDF，保存时新文字作为真正的文字写回 PDF，其它内容不变；同一个词要改多处时，用上面的“查找”逐处改，不会漏；图片和扫描页里的字，先点“识别图片里的文字”再查找。';
+const FINE_PAGES_EN = "Pinch to zoom and move the image; on a computer, scroll to zoom and hold Space to drag. Images are only processed on your device and never uploaded. The original text is read by the built-in reader on the page: common Hei, Song and English print faces can be read; handwriting and decorative type may be read wrong, so type those in by hand. You can also open a PDF: change it page by page, with the original text taken straight from the PDF, and on saving the new text is written back into the PDF as real text while everything else stays the same; to change the same word in several places, use “Find” above to go through them one by one, so none is missed; for text in images and scanned pages, tap “Recognise the text in images” before searching.";
+const FINE_PAGES_ZH = "双指缩放和移动图片；电脑上滚轮缩放，按住空格拖动。图片只在你的设备上处理，不会上传。原文字由页面自带的识别读出：常见的黑体、宋体和英文印刷体能读，手写体、艺术字读不准时请手动输入。也可以打开 PDF：一页一页地改，原文字直接取自 PDF，保存时新文字作为真正的文字写回 PDF，其它内容不变；同一个词要改多处时，用上面的“查找”逐处改，不会漏；图片和扫描页里的字，先点“识别图片里的文字”再查找。";
+const FINE_PAGES = FINE_PAGES_EN;
 function build(target) {
   const pages = target === 'pages';
   let html = rd('index.html');
@@ -34,12 +36,13 @@ function build(target) {
   html = html.replace('/*__CSS__*/', () => rd('style.css')).replace('/*__JS__*/', () => js);
   if (pages) {
     html = html.replace('/*__UIFONT__*/', 'fonts/ibm-plex-mono/ibm-plex-mono.css')
-      .replace('<!--__PWA_HEAD__-->', ['<meta name="description" content="框住图片里的文字，换成新文字，字体、颜色、位置保持一致。在设备上处理，可离线使用。">',
+      .replace('<!--__PWA_HEAD__-->', ['<meta name="description" content="Select text in an image and replace it with new text, keeping the font, colour and position. Processed on your device, usable offline.">',
         '<meta name="theme-color" content="#b45309">', '<link rel="manifest" href="manifest.webmanifest">', '<link rel="icon" href="icons/icon-192.png">',
         '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">', '<meta name="apple-mobile-web-app-capable" content="yes">',
-        '<meta name="mobile-web-app-capable" content="yes">', '<meta name="apple-mobile-web-app-title" content="查缺补漏">',
+        '<meta name="mobile-web-app-capable" content="yes">', '<meta name="apple-mobile-web-app-title" content="Text Overwrite">',
         '<meta name="apple-mobile-web-app-status-bar-style" content="default">'].join('\n'));
-    html = html.replace(/(<p class="fine">)[^<]*(<\/p>)/, (m, a, b) => a + FINE_PAGES + b);
+    html = html.replace(/(<p class="fine"[^>]*>)[^<]*(<\/p>)/, (m, a, b) => a + FINE_PAGES + b);
+    html = html.replace('data-i18n="fineArtifact"', 'data-i18n="finePages"');
   } else {
     html = html.replace('/*__UIFONT__*/', 'https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap').replace('<!--__PWA_HEAD__-->\n', '');
   }
@@ -56,8 +59,8 @@ function build(target) {
       ...PDF_CORE];
     fs.writeFileSync(path.join(out, 'sw.js'), rd('sw.js').replace('__VERSION__', ver).replace('__SHELL__', JSON.stringify(shell)));
     fs.writeFileSync(path.join(out, 'manifest.webmanifest'), JSON.stringify({
-      name: '查缺补漏', short_name: '查缺补漏', description: '框住图片或 PDF 里的文字，换成新文字，字体、颜色、位置保持一致。',
-      lang: 'zh-CN', start_url: './', scope: './', display: 'standalone', orientation: 'any',
+      name: 'Text Overwrite', short_name: 'Text Overwrite', description: 'Select text in an image or PDF and replace it with new text, keeping the font, colour and position.',
+      lang: 'en', start_url: './', scope: './', display: 'standalone', orientation: 'any',
       background_color: '#f3f4f6', theme_color: '#b45309',
       icons: [{ src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' }, { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png' },
         { src: 'icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }]

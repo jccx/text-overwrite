@@ -10,15 +10,15 @@ function controlsInit() {
     const f = e.target.files && e.target.files[0];
     e.target.value = '';
     if (!f) return;
-    try { await loadBlob(f, f.name); } catch (err) { toast(isPdf(f, f.name) ? '这个 PDF 打不开' : '这张图片打不开，换一张 PNG 或 JPG 试试'); }
+    try { await loadBlob(f, f.name); } catch (err) { toast(isPdf(f, f.name) ? t('openPdfFail') : t('openImageFail')); }
   };
   $('btnUndo').onclick = undo;
   $('btnCancel').onclick = dropEdit;
   $('btnApply').onclick = () => {
     const ed = S.edit;
     if (!ed) return;
-    if (!ed.newText.trim()) { toast('先在“新文字”里输入要换成的内容'); $('inNew').focus(); return; }
-    if (ed.newText === ed.origText) { toast('新文字和原文字一样，改一下再应用'); $('inNew').focus(); return; }
+    if (!ed.newText.trim()) { toast(t('newTextEmpty')); $('inNew').focus(); return; }
+    if (ed.newText === ed.origText) { toast(t('newTextSame')); $('inNew').focus(); return; }
     commit('text');
   };
   $('btnErase').onclick = () => commit('erase');
@@ -69,7 +69,7 @@ function controlsInit() {
     e.target.value = '';
     if (!f) return;
     try {
-      const name = f.name.replace(/\.[^.]+$/, '').replace(/["\\]/g, '').slice(0, 60) || '上传字体';
+      const name = f.name.replace(/\.[^.]+$/, '').replace(/["\\]/g, '').slice(0, 60) || t('uploadedFont');
       const face = new FontFace(name, await f.arrayBuffer());
       await face.load();
       document.fonts.add(face);
@@ -77,7 +77,7 @@ function controlsInit() {
       FAM.set(name, fam); if (!sysFams.includes(fam)) sysFams.push(fam);
       buildFamilySelect();
       if (S.edit) chooseFont(fam, S.edit.st.weight, S.edit.st.italic);
-      toast('已加入字体：' + name);
-    } catch (err) { toast('这个字体文件读不了，请用 TTF、OTF 或 WOFF2'); }
+      toast(t('fontAdded', { name }));
+    } catch (err) { toast(t('fontUnreadable')); }
   };
 }

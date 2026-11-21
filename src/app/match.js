@@ -39,7 +39,7 @@ async function runMatch() {
   /* and the PDF's own font, when the whole selection is set in one */
   if (ed.pdfFam && ed.ocr && ed.ocr.tier === 'pdf' && !fams.includes(ed.pdfFam)) fams.unshift(ed.pdfFam);
   setInk(an.color);
-  setStatus('正在载入字体…');
+  setStatus(t('loadingFonts'));
   await ensureCss(fams);
   if (stale()) return;
   let vars = [];
@@ -49,8 +49,8 @@ async function runMatch() {
       if (slant) vars.push({ fam: f, weight: w, italic: true });
     }
   }
-  vars = await loadFaces(vars, text, (d, t) => { if (!stale()) setStatus('正在载入候选字体 ' + d + ' / ' + t + (d < t ? '（首次较慢）' : '')); });
-  if (!stale()) setStatus('正在比对字体…');
+  vars = await loadFaces(vars, text, (d, tot) => { if (!stale()) setStatus(t('loadingCand', { d, t: tot, slow: d < tot ? t('firstSlow') : '' })); });
+  if (!stale()) setStatus(t('matchingFonts'));
   if (stale()) return;
   /* unusual gaps between words (columns, wide word spacing): anchor every word to where it sits.
      If that reading fits badly (the gaps were misjudged), fall back to treating the line as one run. */
@@ -138,7 +138,7 @@ async function runMatch() {
       if (c0) {
         await ensureCss(lat);
         if (stale()) return null;
-        const prog = (d, t) => { if (!stale()) setStatus('正在比对中英文字体组合 ' + d + ' / ' + t); };
+        const prog = (d, tot) => { if (!stale()) setStatus(t('matchingPairs', { d, t: tot })); };
         const n0 = res.length;
         const scoreNew = async list => { const k = res.length; if (!(await run1(await loadFaces(list, text, prog)))) return null; return res.slice(k).sort((a, b) => b.score - a.score); };
         // 1. Latin face, with the best CJK face held fixed
@@ -247,7 +247,7 @@ async function runMatch() {
     list.push({ fam: r.c.fam, weight: r.c.weight, italic: r.c.italic, iou: r.iou, score: r.score, rough: true });
   }
   ed.cands = list;
-  if (!refined.length) { setStatus('没能比对出字体，可以在“微调”里手动选。', true); renderCands(); return; }
+  if (!refined.length) { setStatus(t('noMatch'), true); renderCands(); return; }
   /* for a PDF, a font that can be put into the file keeps the new text real text, a device font makes it a picture:
      the former is taken when it fits nearly as well */
   let best = refined[0];
@@ -267,9 +267,9 @@ async function runMatch() {
     if (S.sample && (oddChar || best.iou < 0.68)) { ed.ocr.reread = true; ed.ocr.auto = true; recognize('default'); }
     else if (oddChar || (ed.ocr.tier === 'local' && best.iou < 0.68)) ed.ocr.doubt = true;
   }
-  if (ed.ocr && ed.ocr.doubt && !S.sample) { ed.ocr.doubt = false; setStatus(ed.ocr.reread && ed.ocr.tier === 'local' ? '这段字读得没把握，已填上最接近的结果，请核对改正。' : '有的字可能读错了，请核对上面的原文字。', true); }
-  else if (best.iou < 0.55) setStatus('没找到很接近的字体。可以在“微调”里手动选，或上传字体文件。', true);
-  else setStatus(ed.tier < 2 && scriptOf(text) === 'latin' && best.iou < 0.8 ? '不够像的话，“微调”里可以在更多字体里再找一遍。' : best.fam.pdf && ed.st.fam === best.fam ? '用的是 PDF 自带的字体，和原文一致。' : ed.pdfAlt ? $('matchStatus').textContent : hint ? 'PDF 里这段字写的字体名是 ' + hint.label + '。' : '', !!ed.pdfAlt);
+  if (ed.ocr && ed.ocr.doubt && !S.sample) { ed.ocr.doubt = false; setStatus(ed.ocr.reread && ed.ocr.tier === 'local' ? t('ocrDoubtFilled') : t('ocrDoubt'), true); }
+  else if (best.iou < 0.55) setStatus(t('noCloseFont'), true);
+  else setStatus(ed.tier < 2 && scriptOf(text) === 'latin' && best.iou < 0.8 ? t('tryMore') : best.fam.pdf && ed.st.fam === best.fam ? t('pdfOwnFont') : ed.pdfAlt ? $('matchStatus').textContent : hint ? t('pdfFontNamed', { label: hint.label }) : '', !!ed.pdfAlt);
   pdfFontNote(ed);
   renderCands();
 }
@@ -288,10 +288,10 @@ async function chooseFont(fam, weight, italic) {
   if (!ed) return;
   const c = { fam, weight: nearW(fam, weight), italic: !!italic };
   const text = ed.primaryText || ed.newText || ed.origText || 'Aa';
-  setStatus('正在载入 ' + famLabel(fam) + '…');
+  setStatus(t('loadingFont', { font: famLabel(fam) }));
   const ok = await ensureFace(c, (ed.origText + ed.newText) || text);
   if (S.edit !== ed) return;
-  if (!ok) { setStatus('这款字体没能载入，换一款试试。', true); refresh(); return; }
+  if (!ok) { setStatus(t('fontLoadFail'), true); refresh(); return; }
   setStatus('');
   let r = null;
   setInk(ed.an.color);

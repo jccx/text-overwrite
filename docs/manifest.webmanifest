@@ -1,8 +1,8 @@
 {
-  "name": "查缺补漏",
-  "short_name": "查缺补漏",
-  "description": "框住图片或 PDF 里的文字，换成新文字，字体、颜色、位置保持一致。",
-  "lang": "zh-CN",
+  "name": "Text Overwrite",
+  "short_name": "Text Overwrite",
+  "description": "Select text in an image or PDF and replace it with new text, keeping the font, colour and position.",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -16,27 +16,25 @@ function offSave(st) { try { localStorage.setItem(offKey, JSON.stringify(st)); }
 /* the few words on the button: 在线加载, or which packs are on the device */
 function offLabel() {
   const st = offState(), have = Object.keys(FONT_PACKS).filter(k => st.packs[k] === 'done');
-  if (st.mode !== 'offline' || !have.length) return '在线加载';
-  return '离线 · ' + have.map(k => FONT_PACKS[k].name.replace('字体', '')).join('、');
+  if (st.mode !== 'offline' || !have.length) return t('onlineLabel');
+  return t('offlineLabel', { packs: have.map(k => packDisplayName(k)).join(t('listSep')) });
 }
 /* how much room the site takes up on the device, as far as the browser tells */
 async function offStore() {
-  let t = '';
+  let txt = '';
   try {
     if (navigator.storage && navigator.storage.estimate) {
       const e = await navigator.storage.estimate();
-      t = '本机已用 ' + mb(e.usage || 0) + (e.quota ? '，浏览器允许约 ' + mb(e.quota) : '');
+      txt = t('storageUsed', { used: mb(e.usage || 0), quota: e.quota ? t('storageQuota', { quota: mb(e.quota) }) : '' });
     }
-  } catch (e) { t = ''; }
-  $('offStore').textContent = t;
+  } catch (e) { txt = ''; }
+  $('offStore').textContent = txt;
 }
 /* draw the sheet: the two modes, the packs with their state, the download button */
 function offRender() {
   const st = offState(), off = st.mode === 'offline';
   $('modeOnline').setAttribute('aria-checked', String(!off)); $('modeOffline').setAttribute('aria-checked', String(off));
-  $('offDesc').textContent = off
-    ? '选好字体包下载到这台设备，之后不联网也能比对字体。没下载的字体会跳过，只用已下载的和手机自带的字体。'
-    : '字体用到哪款才从网上加载，不占手机空间，需要联网。识别和改字本身不用联网。';
+  $('offDesc').textContent = off ? t('offDescOffline') : t('offDescOnline');
   const list = $('packList');
   list.textContent = '';
   if (off) for (const k of Object.keys(FONT_PACKS)) {
@@ -44,28 +42,28 @@ function offRender() {
     const row = document.createElement('label'); row.className = 'pack';
     const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = s === 'done' || (!!OFF.sel[k] && s !== 'done'); cb.disabled = s === 'done' || !!OFF.busy;
     cb.onchange = () => { OFF.sel[k] = cb.checked; offRender(); };
-    const b = document.createElement('b'); b.textContent = p.name;
+    const b = document.createElement('b'); b.textContent = packDisplayName(k);
     const right = document.createElement('span');
-    if (s === 'done') { const d = document.createElement('button'); d.type = 'button'; d.className = 'del'; d.textContent = '删除'; d.disabled = !!OFF.busy; d.onclick = e => { e.preventDefault(); offDelete([k]); }; right.appendChild(d); }
+    if (s === 'done') { const d = document.createElement('button'); d.type = 'button'; d.className = 'del'; d.textContent = t('packDelete'); d.disabled = !!OFF.busy; d.onclick = e => { e.preventDefault(); offDelete([k]); }; right.appendChild(d); }
     const sm = document.createElement('small');
-    sm.textContent = (p.fams ? p.fams + ' 款，约 ' : '打开 PDF 时用的字符表、标准字体和图像解码，约 ') + mb(p.bytes) + (s === 'done' ? ' · 已下载' : s === 'part' && !busy ? ' · 没下载完，可继续' : busy ? ' · 下载中 ' + Math.round(OFF.busy.frac * 100) + '%' : '');
+    sm.textContent = (p.fams ? t('packFams', { n: p.fams, size: mb(p.bytes) }) : t('packPdfDesc', { size: mb(p.bytes) })) + (s === 'done' ? t('packDownloaded') : s === 'part' && !busy ? t('packPart') : busy ? t('packDownloading', { pct: Math.round(OFF.busy.frac * 100) }) : '');
     row.append(cb, b, right, sm);
     if (busy) { const bar = document.createElement('div'); bar.className = 'bar'; const i = document.createElement('i'); i.style.width = (OFF.busy.frac * 100).toFixed(1) + '%'; bar.appendChild(i); row.appendChild(bar); }
     list.appendChild(row);
   }
   const todo = Object.keys(FONT_PACKS).filter(k => OFF.sel[k] && st.packs[k] !== 'done');
   $('offGo').hidden = !off || (!todo.length && !OFF.busy);
-  $('offGo').textContent = OFF.busy ? '停止' : '下载所选（约 ' + mb(todo.reduce((a, k) => a + FONT_PACKS[k].bytes, 0)) + '）';
+  $('offGo').textContent = OFF.busy ? t('offGoStop') : t('offGoDownload', { size: mb(todo.reduce((a, k) => a + FONT_PACKS[k].bytes, 0)) });
   $('offlineState').textContent = offLabel();
   offStore();
 }
 /* fetch the ticked packs into the cache, eight files at a time. A pack that was interrupted carries on where it stopped. */
 async function offDownload() {
   const st = offState(), todo = Object.keys(FONT_PACKS).filter(k => OFF.sel[k] && st.packs[k] !== 'done');
-  if (!todo.length || !('caches' in window)) { if (!('caches' in window)) toast('这个浏览器不支持离线保存'); return; }
+  if (!todo.length || !('caches' in window)) { if (!('caches' in window)) toast(t('noCacheSupport')); return; }
   try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) { /* best effort */ }
   let list;
-  try { list = await (await fetch('fonts/packs.json', { cache: 'no-cache' })).json(); } catch (e) { toast('连不上网，没法下载字体包'); return; }
+  try { list = await (await fetch('fonts/packs.json', { cache: 'no-cache' })).json(); } catch (e) { toast(t('noNetworkPacks')); return; }
   const cache = await caches.open(OFF.cache), stop = { v: false };
   for (const k of todo) {
     const files = list[k].files, total = files.length;
@@ -88,12 +86,12 @@ async function offDownload() {
     };
     await Promise.all(Array.from({ length: 8 }, worker));
     if (stop.v) break;
-    if (failed) { toast(FONT_PACKS[k].name + ' 有 ' + failed + ' 个文件没下载成功，可以再点下载继续'); break; }
+    if (failed) { toast(t('packFailed', { pack: packDisplayName(k), n: failed })); break; }
     st.packs[k] = 'done'; offSave(st);
   }
   const stopped = stop.v;
   OFF.busy = null; offRender();
-  if (!stopped && Object.keys(FONT_PACKS).every(k => !OFF.sel[k] || offState().packs[k] === 'done')) toast('字体包已存到本机，可以离线使用了');
+  if (!stopped && Object.keys(FONT_PACKS).every(k => !OFF.sel[k] || offState().packs[k] === 'done')) toast(t('packsSaved'));
 }
 /* delete these packs from the device */
 async function offDelete(keys) {
@@ -131,11 +129,11 @@ function offInit() {
     const have = Object.keys(st.packs);
     if (have.length) {
       const size = have.reduce((a, k) => a + (FONT_PACKS[k] ? FONT_PACKS[k].bytes : 0), 0);
-      if (!window.confirm('切回在线会删除已下载到本机的字体（约 ' + mb(size) + '）。删除吗？')) return;
+      if (!window.confirm(t('confirmBackOnline', { size: mb(size) }))) return;
       await offDelete(Object.keys(FONT_PACKS));
     }
     const s2 = offState(); s2.mode = 'online'; s2.packs = {}; offSave(s2); offRender();
-    toast('已切回在线，本机字体已删除');
+    toast(t('backOnline'));
   };
   $('offGo').onclick = () => { if (OFF.busy) OFF.busy.stop.v = true; else offDownload(); };
   if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});

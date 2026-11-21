@@ -11,7 +11,7 @@ function refresh() {
   const st = ed.st;
   renderLive();
   const px = st.px * st.sizeAdj;
-  $('mFont').textContent = famLabel(st.fam) + (st.italic ? ' 斜体' : '');
+  $('mFont').textContent = famLabel(st.fam) + (st.italic ? t('italicSuffix') : '');
   $('mFont').title = famLabel(st.fam);
   $('mWeight').textContent = st.weight;
   $('mSize').textContent = px.toFixed(1) + 'px';
@@ -22,7 +22,7 @@ function refresh() {
   sc.className = 'num' + (st.score == null ? '' : st.score >= 0.8 ? ' ok' : st.score < 0.6 ? ' low' : '');
   const sp = $('specSample'), tx = $('specText');
   sp.style.background = rgbHex(ed.an.bgColor);
-  tx.textContent = encT(st.fam, (ed.newText || ed.origText || 'Aa 文字 123').split('\n')[0]);
+  tx.textContent = encT(st.fam, (ed.newText || ed.origText || t('specSample')).split('\n')[0]);
   tx.style.cssText = 'font-family:' + famCss(st.fam) + ';font-weight:' + (st.fam.pdf ? st.fam.pdf.fw : st.weight) + ';font-style:' + (st.fam.pdf ? st.fam.pdf.fs : st.italic ? 'italic' : 'normal') +
     ';color:' + rgbHex(st.color) + ';letter-spacing:' + (st.trEm + st.trAdj).toFixed(4) + 'em';
   // controls
@@ -47,7 +47,7 @@ function refresh() {
   $('outNudge').textContent = st.dx.toFixed(1).replace('.0', '') + ', ' + st.dy.toFixed(1).replace('.0', '');
   $('rngBlur').value = st.blur; $('outBlur').textContent = st.blur.toFixed(2).replace(/0$/, '');
   $('btnMore').hidden = ed.tier >= 2 || scriptOf(ed.origText || 'a') !== 'latin';
-  $('btnOcr').textContent = ed.origText ? '重读' : '识别';
+  $('btnOcr').textContent = ed.origText ? t('ocrReread') : t('ocrRead');
   $('btnOcr').hidden = false;
   for (const ch of $('cands').children) ch.setAttribute('aria-pressed', ch.dataset.fam === st.fam.n ? 'true' : 'false');
 }
@@ -75,9 +75,9 @@ function renderCands() {
 function buildFamilySelect() {
   const sf = $('selFamily');
   sf.textContent = '';
-  const groups = [['这份 PDF 自带的字体', f => !!f.pdf], ['本机字体', f => f.sys && !f.custom && !f.pdf], ['已上传', f => f.custom], ['中文', f => !f.sys && (f.sc === 'sc' || f.sc === 'tc')],
-    ['无衬线', f => !f.sys && !f.sc && f.c === 's'], ['衬线', f => !f.sys && !f.sc && f.c === 'r'], ['等宽', f => !f.sys && !f.sc && f.c === 'm'],
-    ['手写', f => !f.sys && !f.sc && f.c === 'h'], ['展示', f => !f.sys && !f.sc && f.c === 'd'], ['日文', f => f.sc === 'jp'], ['韩文', f => f.sc === 'kr']];
+  const groups = [[t('groupPdfFonts'), f => !!f.pdf], [t('groupDevice'), f => f.sys && !f.custom && !f.pdf], [t('groupUploaded'), f => f.custom], [t('groupChinese'), f => !f.sys && (f.sc === 'sc' || f.sc === 'tc')],
+    [t('groupSans'), f => !f.sys && !f.sc && f.c === 's'], [t('groupSerif'), f => !f.sys && !f.sc && f.c === 'r'], [t('groupMono'), f => !f.sys && !f.sc && f.c === 'm'],
+    [t('groupHand'), f => !f.sys && !f.sc && f.c === 'h'], [t('groupDisplay'), f => !f.sys && !f.sc && f.c === 'd'], [t('groupJapanese'), f => f.sc === 'jp'], [t('groupKorean'), f => f.sc === 'kr']];
   const all = [...FAM.values()].filter(f => !f.comp);
   for (const [label, test] of groups) {
     const list = all.filter(test);

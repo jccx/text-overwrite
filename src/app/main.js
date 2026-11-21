@@ -8,6 +8,7 @@ function boot() {
   detectSystemFonts();
   new ResizeObserver(resizeView).observe(stage);
   resizeView();
+  langInit();
   makeDemo();
   /* inside Claude the page may ask for two capabilities: saving a file, and having Claude read the text of a selection.
      Anywhere else window.claude does not exist, and the page saves and reads by itself. */

@@ -49,7 +49,7 @@ async function readText(ed, force) {
   await Promise.race([S.sampleReady, new Promise(r => setTimeout(r, 1500))]);
   if (S.edit !== ed) return;
   if (S.sample) { recognize('quick'); return; }
-  const fail = () => setStatus('页面自带的识别没能启动（' + (OCR.err || '未知原因') + '）。可以再点一次“识别”重试，或手动输入原文字。', true);
+  const fail = () => setStatus(t('ocrFailStart', { reason: OCR.err || t('ocrUnknown') }), true);
   if (OCR.failed) {
     if (!force) { if (!ed.origText) fail(); return; }
     OCR.p = null; OCR.failed = false; OCR.err = '';
@@ -66,7 +66,7 @@ async function readText(ed, force) {
       ed.varDone = false;
       if (mirror) { ed.newText = ''; $('inNew').value = ''; }
       setOrig(guess, true);
-      setStatus('这段字读得没把握，已填上最接近的结果，请核对改正后再继续。', true);
+      setStatus(t('ocrDoubtFilled'), true);
     } else if (r && r.text && untouched && (force || r.text !== ed.origText)) {
       const mirror = !ed.newText || ed.newText === ed.origText;
       ed.ocr = { tier: 'local', text: r.text, reread: false, conf: r.conf, maybe: r.maybe, slots: r.slots };
@@ -75,7 +75,7 @@ async function readText(ed, force) {
       setOrig(r.text, true);
     } else if (!ed.origText) {
       if (OCR.failed) fail();
-      else setStatus(r && r.raw ? '这段字页面自带的识别读不准（多半是手写体或艺术字）。请在上面手动输入原文字。' : '没读出文字，请手动输入原文字。', true);
+      else setStatus(r && r.raw ? t('ocrUnreadable') : t('ocrNoText'), true);
     } else setStatus('');
   } finally { $('btnOcr').disabled = false; refresh(); }
 }
@@ -87,26 +87,26 @@ async function recognize(tier) {
   tier = tier || 'quick';
   const blob = await ocrCrop(ed);
   if (!blob || S.edit !== ed) return;
-  setStatus(tier === 'quick' ? '正在识别框里的文字…' : '正在用更强的模型重读，稍等…');
+  setStatus(tier === 'quick' ? t('ocrReadingBox') : t('ocrRereading'));
   $('btnOcr').disabled = true;
   try {
     const out = await S.sample.json(OCR_PROMPT, { images: [blob], modelTier: tier, cache: tier === 'quick' });
     if (S.edit !== ed) return;
     const text = out && typeof out.text === 'string' ? out.text.replace(/\r/g, '').split('\n').map(t => t.trim()).filter(Boolean).join('\n') : '';
     const untouched = !ed.origText || (ed.ocr && ed.origText === ed.ocr.text);   // empty, or still exactly what was read before
-    if (!text) { if (!ed.origText) setStatus('没认出文字，请手动输入原文字。', true); else setStatus(''); }
+    if (!text) { if (!ed.origText) setStatus(t('ocrNotRecognised'), true); else setStatus(''); }
     else if (untouched && text !== ed.origText) {
       const mirror = !ed.newText || ed.newText === ed.origText;
       const again = !!ed.origText;
       ed.ocr = { tier, text, reread: tier !== 'quick' || !!(ed.ocr && ed.ocr.reread) };
       if (mirror) { ed.newText = ''; $('inNew').value = ''; }
       setOrig(text, true);
-      if (again) toast('重读后改了原文字，请核对');
+      if (again) toast(t('ocrRereadChanged'));
     } else {
       if (ed.ocr) ed.ocr.reread = ed.ocr.reread || tier !== 'quick';
       const auto = ed.ocr && ed.ocr.auto;
       if (ed.ocr) ed.ocr.auto = false;
-      setStatus(tier === 'quick' || auto ? '' : '重读结果和刚才一样。原文字不对的话，直接改上面的输入框。');
+      setStatus(tier === 'quick' || auto ? '' : t('ocrSameResult'));
     }
   } catch (e) {
     if (S.edit !== ed) return;
@@ -115,16 +115,16 @@ async function recognize(tier) {
       S.sample = null;
       if (!ed.origText) { readText(ed); return; }
       setStatus('');
-    } else if (code === 'rate_limited') setStatus('识别次数暂时用完了，请手动输入原文字。', true);
-    else if (!ed.origText) setStatus('识别没成功，请手动输入原文字，或点“识别”再试。', true);
+    } else if (code === 'rate_limited') setStatus(t('ocrRateLimited'), true);
+    else if (!ed.origText) setStatus(t('ocrFailed2'), true);
     else setStatus('');
   } finally { $('btnOcr').disabled = false; }
 }
 /* read the selection on the device; null when the reader cannot run */
 async function readLocal(ed) {
-  const ok = await ocrLoad(t => { if (S.edit === ed) setStatus(t); });
+  const ok = await ocrLoad(msg => { if (S.edit === ed) setStatus(ocrProgressText(msg)); });
   if (!ok || S.edit !== ed) return null;
-  setStatus('正在读出框里的文字…');
+  setStatus(t('ocrReadingOut'));
   await tick(); await tick();
   if (S.edit !== ed) return null;
   return ocrReadLines(ed.an, ed.bands);

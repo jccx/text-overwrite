@@ -57,7 +57,7 @@ async function findReadPics() {
   const ok = await ocrLoad(t => { O.note = t; findRender(); });
   if (findCtx() !== P) return;
   O.note = '';
-  if (!ok) { O.state = 'none'; findRender(); toast('识别没能启动，请再试一次'); return; }
+  if (!ok) { O.state = 'none'; findRender(); toast(t('ocrFailed')); return; }
   for (let no = 1; no <= P.n && !O.stop; no++) {
     if (O.lines.has(no)) continue;
     let ctx = S.ictx, W = S.iw, H = S.ih, areas = null, base = [];
@@ -127,35 +127,35 @@ function findRender() {
   const P = findCtx(), box = $('findBox');
   box.hidden = !P || BUILD !== 'pages' || (P.isPic && !S.img);
   if (box.hidden) return;
-  const F = P.find, O = P.ocr, pic = P.isPic, info = $('findInfo'), few = a => (a.length > 8 ? a.slice(0, 8).join('、') + '…' : a.join('、'));
+  const F = P.find, O = P.ocr, pic = P.isPic, info = $('findInfo'), few = a => (a.length > 8 ? a.slice(0, 8).join(t('listSep')) + '…' : a.join(t('listSep')));
   /* reading the pictures is offered once, and only where there are pictures */
   const picPages = pic ? [1] : [...P.imgs.entries()].filter(e => e[1].length).map(e => e[0]).sort((a, b) => a - b), offer = O.state !== 'done' && picPages.length > 0;
   $('ocrRow').hidden = !offer;
   if (offer) {
-    $('ocrGo').textContent = O.state === 'run' ? '停止' : '识别图片里的文字';
-    $('ocrNote').textContent = O.state === 'run' ? O.note || (pic ? '正在识别图片里的文字…' : '正在识别第 ' + (O.at || picPages[0]) + ' 页的图片…') :
-      pic ? '图片里的字要先识别一次，才能查找。' : '第 ' + few(picPages) + ' 页有图片或扫描内容，里面的字要先识别一次，才能查到。';
+    $('ocrGo').textContent = O.state === 'run' ? t('ocrStop') : t('ocrGo');
+    $('ocrNote').textContent = O.state === 'run' ? ocrProgressText(O.note) || (pic ? t('ocrRunningPic') : t('ocrRunningPage', { n: O.at || picPages[0] })) :
+      pic ? t('ocrNeedPic') : t('ocrNeedPages', { pages: few(picPages) });
   }
-  $('findIn').placeholder = pic ? '查找图片里的文字' : '查找这份 PDF 里的文字';
+  $('findIn').placeholder = pic ? t('findPhPic') : t('findPhPdf');
   $('findIn').disabled = $('findGo').disabled = pic && O.state !== 'done';
   $('findNav').hidden = !(F && F.hits.length);
   info.hidden = !F;
   if (!F) return;
   const n = F.hits.length, left = findLeft();
   if (!n) {
-    info.textContent = !F.done ? '正在查找… 已查 ' + F.pages + ' / ' + P.n + ' 页' : '没有找到“' + F.q + '”。' +
-      (offer ? '图片和扫描页里的字，要先点下面的“识别图片里的文字”。' : pic || O.state === 'done' ? '识别不出来的字（手写、艺术字、太模糊的）查不到，跨行的词句也查不到。' : '跨行的词句查不到。');
+    info.textContent = !F.done ? t('findSearching', { done: F.pages, total: P.n }) : t('findNone', { q: F.q }) +
+      (offer ? t('findNoneOcrHint') : pic || O.state === 'done' ? t('findNoneUnreadable') : t('findNoneCrossLine'));
     return;
   }
   const pages = [...new Set(F.hits.map(h => h.no))];
   info.innerHTML = '';
   const b = document.createElement('b');
-  b.textContent = (F.done ? '共 ' : '已找到 ') + n + ' 处';
-  info.append(b, (pic ? '' : '（第 ' + few(pages) + ' 页）') + (F.done ? '' : '，还在查 ' + F.pages + ' / ' + P.n + ' 页') + '。' +
-    (left === n ? '都还没改。' : left > 0 ? '已改 ' + (n - left) + ' 处，还剩 ' + left + ' 处。' : '全部改过了。') + (F.at >= 0 ? ' 现在是第 ' + (F.at + 1) + ' 处。' : '') +
-    (F.hits.some(h => h.ocr) || (O.state === 'done' && [...O.lines.values()].some(l => l.length)) ? ' 图片里的字是识别出来的，可能有错漏，请再人工核对一遍。' : '') +
-    (offer && !pic ? ' 图片和扫描页还没识别。' : ''));
-  $('findNext').textContent = left > 0 ? '下一处' : '再看一遍';
+  b.textContent = F.done ? t('findFoundTotal', { n }) : t('findFoundSoFar', { n });
+  info.append(b, (pic ? '' : t('findOnPages', { pages: few(pages) })) + (F.done ? '' : t('findStillSearching', { done: F.pages, total: P.n })) +
+    (left === n ? t('findAllUnchanged') : left > 0 ? t('findChangedSome', { done: n - left, left, n }) : t('findAllChanged')) + (F.at >= 0 ? t('findCurrentHit', { i: F.at + 1 }) : '') +
+    (F.hits.some(h => h.ocr) || (O.state === 'done' && [...O.lines.values()].some(l => l.length)) ? t('findOcrWarning') : '') +
+    (offer && !pic ? t('findOcrNotDone') : ''));
+  $('findNext').textContent = left > 0 ? t('nextHit') : t('reviewAgain');
 }
 /* go to the next occurrence that has not been edited (when all have been: just the next one) and select it */
 async function findStep(dir) {

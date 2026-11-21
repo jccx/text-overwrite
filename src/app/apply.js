@@ -73,7 +73,7 @@ function commit(mode, quiet) {
   S.edit = null;
   $('pEdit').hidden = true; $('pIdle').hidden = false;
   const left = findApplied(ed, mode);
-  if (!quiet) toast(mode === 'erase' ? '已擦除。可以继续框选' : left > 0 ? '已应用。查找的文字还剩 ' + left + ' 处没改' : left === 0 ? '已应用。查找到的几处都改完了' : '已应用。可以继续框选其它文字');
+  if (!quiet) toast(mode === 'erase' ? t('appliedErased') : left > 0 ? t('appliedLeft', { left }) : left === 0 ? t('appliedAllFound') : t('applied'));
   requestDraw();
 }
 /* drop the open edit; with none open, take back the edit applied last */

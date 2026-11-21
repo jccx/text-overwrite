@@ -13,7 +13,7 @@ function setOrig(v, fromOcr) {
   ed.origLines = v.split('\n').map(s => s.trim()).filter(Boolean);
   if (fromOcr) { $('inOrig').value = v; autoRows($('inOrig')); if (!ed.newText) { ed.newText = findRepl(ed) || v; $('inNew').value = ed.newText; autoRows($('inNew')); } }
   if (ed.origLines.length) scheduleMatch(fromOcr ? 0 : 550);
-  else { ed.matchToken++; ed.st.matched = false; ed.st.score = null; ed.cands = []; renderCands(); computeFit(ed); refresh(); setStatus('输入原文字后，自动比对字体。'); }
+  else { ed.matchToken++; ed.st.matched = false; ed.st.score = null; ed.cands = []; renderCands(); computeFit(ed); refresh(); setStatus(t('enterOrig')); }
 }
 function inputsInit() {
   $('inOrig').addEventListener('compositionstart', () => { composing = true; });
@@ -28,7 +28,7 @@ function inputsInit() {
     pdfCoverNote(ed);
     if (!ed.st.matched && ed.an.found) {
       computeFit(ed);
-      if (!ed.origLines.length && ed.newText.trim() && !/正在/.test($('matchStatus').textContent)) setStatus('没有原文字：大小和位置按旧字的外框估算。填上原文字可比对出字体。');
+      if (!ed.origLines.length && ed.newText.trim() && !/Loading|Matching|Reading|Recognising|Preparing|正在/.test($('matchStatus').textContent)) setStatus(t('noOrig'));
     }
     refresh();
   });

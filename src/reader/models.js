@@ -70,7 +70,7 @@ function ocrLoad(onProgress) {
   if (OCR.p) return OCR.p;
   OCR.p = (async () => {
     const note = t => { if (OCR.progress) OCR.progress(t); };
-    note('正在准备页面自带的识别（只在第一次）…');
+    note('ocr-prep');
     await tick();
     /* the Latin classifier: int8 weights, one row per output */
     if (typeof OCR_NET !== 'undefined') {
@@ -127,7 +127,7 @@ function ocrLoad(onProgress) {
           B.lasp[t] = Math.log(w / h); B.ch[t] = part[k]; B.pl[t] = pi; B.rare[t] = i0 + k >= nCommon && i0 + k < han1.length + han2.length ? 1 : 0;
         }
         done += part.length;
-        note('正在准备页面自带的识别 ' + Math.round((done / total) * 100) + '%（只在第一次）');
+        note('ocr-prep-pct:' + Math.round((done / total) * 100));
         await tick();
       }
     }

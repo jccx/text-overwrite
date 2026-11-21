@@ -32,14 +32,14 @@ function pdfOpenDoc(lib, bytes, askPassword) {
 
 /* open a PDF the user picked; it takes the place of whatever is open */
 async function openPdf(blob, name) {
-  if (BUILD !== 'pages') { toast('这个版本只能打开图片；PDF 请用网页版'); return; }
-  $('stageNote').textContent = '正在打开 PDF…';
+  if (BUILD !== 'pages') { toast(t('artifactOnlyPdf')); return; }
+  $('stageNote').textContent = t('openingPdf');
   let lib, doc, pw = null;
   const bytes = new Uint8Array(await blob.arrayBuffer());
-  try { lib = await pdfLib(); } catch (e) { $('stageNote').textContent = ''; toast('PDF 组件没加载成功，请联网后再试一次'); return; }
+  try { lib = await pdfLib(); } catch (e) { $('stageNote').textContent = ''; toast(t('pdfLibFail')); return; }
   try {
-    doc = await pdfOpenDoc(lib, bytes, (reason, n) => (pw = window.prompt(n ? '密码不对，请再输入一次' : '这个 PDF 设了打开密码，请输入')));
-  } catch (e) { $('stageNote').textContent = ''; toast(pw != null || /password/i.test(String(e && e.name)) ? '没有密码，打不开这个 PDF' : '这个 PDF 打不开，文件可能已损坏'); return; }
+    doc = await pdfOpenDoc(lib, bytes, (reason, n) => (pw = window.prompt(n ? t('pdfPwWrong') : t('pdfPwAsk'))));
+  } catch (e) { $('stageNote').textContent = ''; toast(pw != null || /password/i.test(String(e && e.name)) ? t('pdfNoPw') : t('pdfDamaged')); return; }
   if (S.pdf) pdfDestroy(S.pdf.doc);
   if (S.edit) dropEdit();
   pdfDropFonts();
@@ -122,7 +122,7 @@ async function pdfGo(no) {
   if (S.edit) { if (S.edit.live && S.edit.newText !== S.edit.origText) commit('text', true); else dropEdit(); }
   pdfStash();
   P.busy = true;
-  $('stageNote').textContent = '正在打开第 ' + no + ' 页…';
+  $('stageNote').textContent = t('openingPage', { n: no });
   try {
     const r = await pdfRender(no);
     if (S.pdf !== P) return;
@@ -134,8 +134,8 @@ async function pdfGo(no) {
     PDFS.out = null;
     findRender();
     requestDraw();
-  } catch (e) { toast('第 ' + no + ' 页没能显示出来'); }
-  finally { P.busy = false; pdfPager(); if ($('stageNote').textContent.startsWith('正在打开')) $('stageNote').textContent = ''; }
+  } catch (e) { toast(t('pageShowFail', { n: no })); }
+  finally { P.busy = false; pdfPager(); if ($('stageNote').textContent.startsWith(t('openingPrefix'))) $('stageNote').textContent = ''; }
 }
 /* the page number between its two arrows */
 function pdfPager() {

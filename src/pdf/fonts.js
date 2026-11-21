@@ -44,7 +44,7 @@ function pdfNoteFont(P, id, f, glyphs) {
   let fam = P.fonts.get(id);
   if (!fam) {
     const hint = pdfFontHint(f.name) || { label: id, weight: 400, italic: false };
-    fam = { n: 'pdf:' + id, label: 'PDF 自带 · ' + hint.label, c: f.isMonospace ? 'm' : f.isSerifFont ? 'r' : 's', w: [hint.weight], it: 0, tier: 0, sc: '', sys: true, cjk: true,
+    fam = { n: 'pdf:' + id, label: t('pdfOwnLabel', { label: hint.label }), c: f.isMonospace ? 'm' : f.isSerifFont ? 'r' : 's', w: [hint.weight], it: 0, tier: 0, sc: '', sys: true, cjk: true,
       pdf: { id, css: (f.systemFontInfo && f.systemFontInfo.css) || '"' + (f.loadedName || id) + '", ' + (f.fallbackName || 'sans-serif'), fs: f.italic ? 'italic' : 'normal', fw: f.black ? '900' : f.bold ? 'bold' : 'normal', map: new Map(), whole: !!f.systemFontInfo, fo: f } };
     P.fonts.set(id, fam); FAM.set(fam.n, fam);
     PDFS.famDirty = true;
@@ -82,15 +82,15 @@ function pdfFontFor(ed) {
     /* a font that can be put into the file keeps the new text real text; a device font would make it a picture */
     const others = ed.cands.filter(r => !r.fam.pdf && !r.rough), emb = others.find(r => pdfEmbeddable(r.fam));
     const alt = emb && emb.score >= others[0].score - 0.1 ? emb : others[0];
-    const what = 'PDF 自带的字体里没有“' + Array.from(miss).slice(0, 8).join('') + '”';
-    if (!alt) { setStatus(what + '，这几个字会用别的字体显示。可以在“微调”里换一款字体。', true); return; }
+    const what = t('pdfMissingFont', { chars: Array.from(miss).slice(0, 8).join('') });
+    if (!alt) { setStatus(what + t('pdfMissingAlt'), true); return; }
     ed.pdfAlt = true;
     adopt(alt, true); renderCands();
-    setStatus(what + '，新文字改用最接近的字体：' + famLabel(alt.fam) + '。', true);
+    setStatus(what + t('pdfMissingSwitch', { font: famLabel(alt.fam) }), true);
   } else if (ed.pdfAlt && !miss && st.fam !== own.fam) {
     ed.pdfAlt = false;
     adopt(own, true); renderCands();
-    setStatus('新文字用的是 PDF 自带的字体，和原文一致。');
+    setStatus(t('pdfOwnFont'));
   }
 }
 
@@ -98,7 +98,7 @@ function pdfFontFor(ed) {
 function pdfFontNote(ed) {
   if (!S.pdf || BUILD !== 'pages' || ed.st.fam.pdf || pdfEmbeddable(ed.st.fam)) return;
   const el = $('matchStatus');
-  setStatus((el.textContent ? el.textContent + ' ' : '') + '这款是设备自带的字体，放不进 PDF：保存后这处是贴上去的图片。想要真正的文字，可以在“微调”里换一款字体库里的字体。', el.classList.contains('warn'));
+  setStatus((el.textContent ? el.textContent + ' ' : '') + t('pdfDeviceFontNote'), el.classList.contains('warn'));
 }
 
 /* ---------- the library's fonts: can a family go into the file, and which characters do its files have ---------- */
@@ -160,19 +160,19 @@ async function pdfUncovered(fam, weight, italic, t) {
 /* the new text has characters the library font in use cannot draw: change to the closest font that has them all
    (text in a font with gaps is drawn partly in some other font, and is saved as a picture) */
 async function pdfCoverNote(ed) {
-  const st = ed.st, t = ed.newText, fam = st.fam;
+  const st = ed.st, txt = ed.newText, fam = st.fam;
   if (!S.pdf || BUILD !== 'pages' || fam.pdf || !pdfEmbeddable(fam) || !t) return;
-  const miss = await pdfUncovered(fam, st.weight, st.italic, t), same = () => S.edit === ed && ed.newText === t && ed.st.fam === fam;
+  const miss = await pdfUncovered(fam, st.weight, st.italic, txt), same = () => S.edit === ed && ed.newText === txt && ed.st.fam === fam;
   if (!same() || !miss) return;
-  const what = '“' + famLabel(fam) + '”里没有“' + Array.from(miss).slice(0, 8).join('') + '”';
+  const what = t('pdfMissingInFont', { font: famLabel(fam), chars: Array.from(miss).slice(0, 8).join('') });
   if (!st.famUser) for (const r of ed.cands) {
-    if (r.rough || r.fam === fam || r.fam.pdf || !pdfEmbeddable(r.fam) || (await pdfUncovered(r.fam, r.weight, r.italic, t + ed.origText))) continue;
+    if (r.rough || r.fam === fam || r.fam.pdf || !pdfEmbeddable(r.fam) || (await pdfUncovered(r.fam, r.weight, r.italic, txt + ed.origText))) continue;
     if (!same()) return;
     adopt(r, true); renderCands();
-    setStatus(what + '，新文字改用最接近的字体：' + famLabel(r.fam) + '。', true);
+    setStatus(what + t('pdfMissingSwitch', { font: famLabel(r.fam) }), true);
     return;
   }
-  if (same()) setStatus(what + '，这几个字会用别的字体显示，保存后这处是贴上去的图片。可以在“微调”里换一款字体。', true);
+  if (same()) setStatus(what + t('pdfMissingPic'), true);
 }
 
 /* ---------- fitting ---------- */

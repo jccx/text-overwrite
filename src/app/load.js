@@ -20,7 +20,7 @@ async function loadBlob(blob, name) {
   pdfClose();
   setImage(c, x, name || 'image', /jpe?g/i.test(blob.type) ? 'image/jpeg' : 'image/png', false);
   warmReader();
-  if (k < 1) toast('图片很大，已缩小到最长边 4096 像素');
+  if (k < 1) toast(t('imageTooBig'));
 }
 /* this canvas (c, with its context x) is the picture now: an open edit is dropped, the undo list starts empty.
    demo: it is the sample picture. */
@@ -28,7 +28,7 @@ function setImage(c, x, name, type, demo) {
   dropEdit();
   S.img = c; S.ictx = x; S.iw = c.width; S.ih = c.height; S.name = name.replace(/\.[^.]+$/, ''); S.type = type; S.demo = demo;
   S.undo = []; $('btnUndo').disabled = true;
-  $('stageNote').textContent = demo ? '示例图片 · 拖一个框，框住任意一处文字试试' : '';
+  $('stageNote').textContent = demo ? t('demoHint') : '';
   /* a picture of its own (not a page of a PDF) starts with nothing read and nothing looked for */
   if (!S.pdf) { S.pic = findNew(true); $('findIn').value = ''; }
   findRender();

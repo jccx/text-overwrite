@@ -36,7 +36,7 @@ function startEdit(userRect, keep, hit) {
   let carry = null;
   if (prev) {
     if (keep) carry = prev;
-    else if (prev.newText && prev.newText !== prev.origText && prev.live) { commit('text', true); toast('上一处修改已应用，可以撤销'); }
+    else if (prev.newText && prev.newText !== prev.origText && prev.live) { commit('text', true); toast(t('prevApplied')); }
     if (S.edit) { S.edit.matchToken++; restoreLive(); }
   }
   const ed = {
@@ -61,9 +61,9 @@ function startEdit(userRect, keep, hit) {
   autoRows($('inOrig')); autoRows($('inNew'));
   $('rngGrow').value = ed.an.grow; $('outGrow').textContent = ed.an.grow;
   renderCands();
-  if (!ed.an.found) setStatus('框里没找到明显的文字。把框缩到只包住文字和底色再试。', true);
+  if (!ed.an.found) setStatus(t('noTextInBox'), true);
   else if (ed.origLines.length) { setStatus(''); scheduleMatch(0); }
   else readText(ed);
   computeFit(ed); refresh();
-  if (S.demo) $('stageNote').textContent = '示例图片';
+  if (S.demo) $('stageNote').textContent = t('demoLabel');
 }

@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="框住图片里的文字，换成新文字，字体、颜色、位置保持一致。在设备上处理，可离线使用。">
+<meta name="description" content="Select text in an image and replace it with new text, keeping the font, colour and position. Processed on your device, usable offline.">
 <meta name="theme-color" content="#b45309">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="查缺补漏">
+<meta name="apple-mobile-web-app-title" content="Text Overwrite">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>查缺补漏</title>
+<title data-i18n="appTitle">Text Overwrite</title>
 <link rel="stylesheet" href="fonts/ibm-plex-mono/ibm-plex-mono.css">
 <style>
 :root {
@@ -295,138 +295,139 @@ input[type="range"] { accent-color: var(--accent); min-width: 0; }
 <body>
 <div id="app">
   <header class="bar">
-    <h1 class="mark" aria-label="查缺补漏">查缺补<span class="mark-sel">漏</span></h1>
+    <h1 class="mark" id="brandMark" data-i18n-aria="appTitle" aria-label="Text Overwrite">Text <span class="mark-sel">Overwrite</span></h1>
     <div class="bar-actions">
-      <button type="button" id="btnOpen" class="btn">打开图片</button>
-      <button type="button" id="btnUndo" class="btn" disabled>撤销</button>
-      <button type="button" id="btnSave" class="btn primary">保存</button>
+      <button type="button" id="btnOpen" class="btn" data-i18n="openImage">Open image</button>
+      <button type="button" id="btnUndo" class="btn" disabled data-i18n="undo">Undo</button>
+      <button type="button" id="btnSave" class="btn primary" data-i18n="save">Save</button>
+      <button type="button" id="btnLang" class="btn" data-i18n-aria="langAria" aria-label="Switch language">中文</button>
     </div>
     <input type="file" id="fileInput" accept="image/*" hidden>
     <input type="file" id="fontInput" accept=".ttf,.otf,.woff,.woff2,font/*" hidden>
   </header>
 
-  <main id="stage" class="stage" aria-label="图片工作区">
+  <main id="stage" class="stage" data-i18n-aria="stageAria" aria-label="Image workspace">
     <canvas id="view"></canvas>
     <div id="sel" class="sel" hidden>
       <i data-h="nw"></i><i data-h="ne"></i><i data-h="sw"></i><i data-h="se"></i>
     </div>
     <p id="stageNote" class="stage-note"></p>
-    <div class="zoom" role="group" aria-label="缩放">
-      <button type="button" id="zOut" aria-label="缩小">−</button>
-      <button type="button" id="zFit">适应</button>
-      <button type="button" id="zIn" aria-label="放大">+</button>
+    <div class="zoom" role="group" data-i18n-aria="zoomAria" aria-label="Zoom">
+      <button type="button" id="zOut" data-i18n-aria="zoomOut" aria-label="Zoom out">−</button>
+      <button type="button" id="zFit" data-i18n="fit">Fit</button>
+      <button type="button" id="zIn" data-i18n-aria="zoomIn" aria-label="Zoom in">+</button>
     </div>
-    <div id="pager" class="zoom pager" role="group" aria-label="翻页" hidden>
-      <button type="button" id="pgPrev" aria-label="上一页">‹</button>
-      <button type="button" id="pgNum" aria-label="跳到某一页">1 / 1</button>
-      <button type="button" id="pgNext" aria-label="下一页">›</button>
+    <div id="pager" class="zoom pager" role="group" data-i18n-aria="pagerAria" aria-label="Turn pages" hidden>
+      <button type="button" id="pgPrev" data-i18n-aria="prevPage" aria-label="Previous page">‹</button>
+      <button type="button" id="pgNum" data-i18n-aria="goToPage" aria-label="Go to a page">1 / 1</button>
+      <button type="button" id="pgNext" data-i18n-aria="nextPage" aria-label="Next page">›</button>
     </div>
-    <div id="dropHint" class="drop-hint" hidden>松开，打开这张图片</div>
+    <div id="dropHint" class="drop-hint" hidden data-i18n="dropHint">Release to open this image</div>
   </main>
 
   <aside id="panel" class="panel">
     <section id="pIdle" class="idle">
       <div id="findBox" class="find" hidden>
-        <div class="find-in"><input id="findIn" type="search" enterkeyhint="search" placeholder="查找这份 PDF 里的文字" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="查找这份 PDF 里的文字"><button type="button" id="findGo" class="btn">查找</button></div>
+        <div class="find-in"><input id="findIn" type="search" enterkeyhint="search" data-i18n-ph="findPhPdf" data-i18n-aria="findPhPdf" placeholder="Search the text in this PDF" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search the text in this PDF"><button type="button" id="findGo" class="btn" data-i18n="find">Search</button></div>
         <p id="findInfo" class="find-info" hidden></p>
-        <div id="findNav" class="find-nav" hidden><button type="button" id="findPrev" class="btn">上一处</button><button type="button" id="findNext" class="btn primary">下一处</button></div>
-        <div id="ocrRow" class="ocr-row" hidden><span id="ocrNote"></span><button type="button" id="ocrGo" class="btn">识别图片里的文字</button></div>
+        <div id="findNav" class="find-nav" hidden><button type="button" id="findPrev" class="btn" data-i18n="prevHit">Previous occurrence</button><button type="button" id="findNext" class="btn primary" data-i18n="nextHit">Next occurrence</button></div>
+        <div id="ocrRow" class="ocr-row" hidden><span id="ocrNote"></span><button type="button" id="ocrGo" class="btn" data-i18n="ocrGo">Recognise the text in images</button></div>
       </div>
       <ol class="steps">
-        <li><b>框住要改的字</b><span>在图片上拖出一个框，只包住文字和它的底色。一次框一种样式。</span></li>
-        <li><b>核对原文字</b><span>中文、英文、中英混排都可以。用它比对出字体、字重、字号、字距和颜色。</span></li>
-        <li><b>输入新文字，点应用</b><span>旧字被擦掉，背景补回来。字数相同，新字落在原来的位置；字数不同，保持原来的缩进、字距、间隔和行距。</span></li>
+        <li><b data-i18n="step1T">Select the text to change</b><span data-i18n="step1D">Drag a box around it on the image, covering just the text and its background. One style at a time.</span></li>
+        <li><b data-i18n="step2T">Check the original text</b><span data-i18n="step2D">Chinese, English, or mixed text all work. It is used to match the font, weight, size, spacing and colour.</span></li>
+        <li><b data-i18n="step3T">Type the new text, then Apply</b><span data-i18n="step3D">The old text is erased and the background filled back in. With the same number of characters, the new text lands where the old was; with a different count, the original indent, spacing, gaps and line spacing are kept.</span></li>
       </ol>
-      <button type="button" id="btnOffline" class="offline-row" hidden><span>字体</span><b id="offlineState">在线加载</b><i>设置离线使用</i></button>
-      <p class="fine">双指缩放和移动图片；电脑上滚轮缩放，按住空格拖动。图片只在你的设备上处理，不会上传。原文字由页面自带的识别读出：常见的黑体、宋体和英文印刷体能读，手写体、艺术字读不准时请手动输入。也可以打开 PDF：一页一页地改，原文字直接取自 PDF，保存时新文字作为真正的文字写回 PDF，其它内容不变；同一个词要改多处时，用上面的“查找”逐处改，不会漏；图片和扫描页里的字，先点“识别图片里的文字”再查找。</p>
-      <button type="button" id="btnPrivacy" class="link-btn" hidden>隐私与声明</button>
+      <button type="button" id="btnOffline" class="offline-row" hidden><span data-i18n="offlineFonts">Fonts</span><b id="offlineState">Load online</b><i data-i18n="offlineSettings">Set up offline use</i></button>
+      <p class="fine" data-i18n="finePages">Pinch to zoom and move the image; on a computer, scroll to zoom and hold Space to drag. Images are only processed on your device and never uploaded. The original text is read by the built-in reader on the page: common Hei, Song and English print faces can be read; handwriting and decorative type may be read wrong, so type those in by hand. You can also open a PDF: change it page by page, with the original text taken straight from the PDF, and on saving the new text is written back into the PDF as real text while everything else stays the same; to change the same word in several places, use “Find” above to go through them one by one, so none is missed; for text in images and scanned pages, tap “Recognise the text in images” before searching.</p>
+      <button type="button" id="btnPrivacy" class="link-btn" hidden data-i18n="privacy">Privacy and terms</button>
     </section>
 
     <section id="pEdit" class="edit" hidden>
       <div class="field">
-        <label for="inOrig">原文字<small>图片里现在写的</small></label>
+        <label for="inOrig"><span data-i18n="origLabel">Original text</span><small data-i18n="origHint">what the picture says now</small></label>
         <div class="row">
-          <textarea id="inOrig" rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="照着图片输入，用来比对字体"></textarea>
-          <button type="button" id="btnOcr" class="btn" hidden>识别</button>
+          <textarea id="inOrig" rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="origPh" placeholder="Type what the picture says, to match the font"></textarea>
+          <button type="button" id="btnOcr" class="btn" hidden data-i18n="ocrRead">Recognise</button>
         </div>
       </div>
       <div class="field">
-        <label for="inNew">新文字</label>
-        <textarea id="inNew" rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="要换成什么"></textarea>
+        <label for="inNew" data-i18n="newLabel">New text</label>
+        <textarea id="inNew" rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="newPh" placeholder="What to change it to"></textarea>
       </div>
 
       <div class="spec" id="spec">
         <div class="spec-sample" id="specSample"><span id="specText">Aa</span></div>
         <dl class="spec-meta">
-          <div><dt>字体</dt><dd id="mFont">—</dd></div>
-          <div><dt>字重</dt><dd id="mWeight" class="num">—</dd></div>
-          <div><dt>字号</dt><dd id="mSize" class="num">—</dd></div>
-          <div><dt>颜色</dt><dd class="num"><i id="mSwatch" class="sw"></i><span id="mColor">—</span></dd></div>
-          <div><dt>吻合</dt><dd id="mScore" class="num">—</dd></div>
+          <div><dt data-i18n="specFont">Font</dt><dd id="mFont">—</dd></div>
+          <div><dt data-i18n="specWeight">Weight</dt><dd id="mWeight" class="num">—</dd></div>
+          <div><dt data-i18n="specSize">Size</dt><dd id="mSize" class="num">—</dd></div>
+          <div><dt data-i18n="specColor">Colour</dt><dd class="num"><i id="mSwatch" class="sw"></i><span id="mColor">—</span></dd></div>
+          <div><dt data-i18n="specMatch">Match</dt><dd id="mScore" class="num">—</dd></div>
         </dl>
       </div>
       <p id="matchStatus" class="status" role="status"></p>
-      <div id="cands" class="cands" role="group" aria-label="其它接近的字体"></div>
+      <div id="cands" class="cands" role="group" data-i18n-aria="candsAria" aria-label="Other close fonts"></div>
 
       <details id="tune" class="tune">
-        <summary>微调</summary>
+        <summary data-i18n="tune">Fine-tune</summary>
         <div class="grid">
-          <label for="selFamily">字体</label>
+          <label for="selFamily" data-i18n="familyLabel">Font</label>
           <div class="row">
             <select id="selFamily"></select>
-            <button type="button" id="btnFont" class="btn">上传</button>
+            <button type="button" id="btnFont" class="btn" data-i18n="upload">Upload</button>
           </div>
-          <label for="selWeight">字重</label>
+          <label for="selWeight" data-i18n="weightLabel">Weight</label>
           <div class="row">
             <select id="selWeight"></select>
-            <label class="check"><input type="checkbox" id="chkItalic"> 斜体</label>
+            <label class="check"><input type="checkbox" id="chkItalic"> <span data-i18n="italic">Italic</span></label>
           </div>
-          <label for="numSize">字号</label>
+          <label for="numSize" data-i18n="sizeLabel">Size</label>
           <div class="stepper">
-            <button type="button" data-step="size" data-d="-1" aria-label="减小字号">−</button>
+            <button type="button" data-step="size" data-d="-1" data-i18n-aria="sizeDown" aria-label="Decrease size">−</button>
             <input id="numSize" type="number" inputmode="decimal" step="0.5" min="1">
-            <button type="button" data-step="size" data-d="1" aria-label="增大字号">+</button>
+            <button type="button" data-step="size" data-d="1" data-i18n-aria="sizeUp" aria-label="Increase size">+</button>
             <span class="unit">px</span>
           </div>
-          <label for="numTrack">字距</label>
+          <label for="numTrack" data-i18n="trackLabel">Letter spacing</label>
           <div class="stepper">
-            <button type="button" data-step="track" data-d="-1" aria-label="收紧字距">−</button>
+            <button type="button" data-step="track" data-d="-1" data-i18n-aria="trackDown" aria-label="Tighten spacing">−</button>
             <input id="numTrack" type="number" inputmode="decimal" step="1">
-            <button type="button" data-step="track" data-d="1" aria-label="放宽字距">+</button>
+            <button type="button" data-step="track" data-d="1" data-i18n-aria="trackUp" aria-label="Loosen spacing">+</button>
             <span class="unit">‰</span>
           </div>
-          <label for="inColor">颜色</label>
+          <label for="inColor" data-i18n="colorLabel">Colour</label>
           <div class="row">
             <input id="inColor" type="color" value="#000000">
-            <input id="inHex" type="text" class="num" maxlength="7" spellcheck="false" autocomplete="off" aria-label="十六进制颜色">
+            <input id="inHex" type="text" class="num" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="hexAria" aria-label="Hex colour">
           </div>
-          <span class="lbl" id="lblAlign">对齐</span>
+          <span class="lbl" id="lblAlign" data-i18n="alignLabel">Alignment</span>
           <div class="seg" role="group" aria-labelledby="lblAlign">
-            <button type="button" data-align="left">左</button>
-            <button type="button" data-align="center">中</button>
-            <button type="button" data-align="right">右</button>
+            <button type="button" data-align="left" data-i18n="alignLeft">Left</button>
+            <button type="button" data-align="center" data-i18n="alignCenter">Centre</button>
+            <button type="button" data-align="right" data-i18n="alignRight">Right</button>
           </div>
-          <span class="lbl" id="lblNudge">位置</span>
+          <span class="lbl" id="lblNudge" data-i18n="nudgeLabel">Position</span>
           <div class="seg nudge" role="group" aria-labelledby="lblNudge">
-            <button type="button" data-nx="-1" data-ny="0" aria-label="左移">←</button>
-            <button type="button" data-nx="0" data-ny="-1" aria-label="上移">↑</button>
-            <button type="button" data-nx="0" data-ny="1" aria-label="下移">↓</button>
-            <button type="button" data-nx="1" data-ny="0" aria-label="右移">→</button>
+            <button type="button" data-nx="-1" data-ny="0" data-i18n-aria="moveLeft" aria-label="Move left">←</button>
+            <button type="button" data-nx="0" data-ny="-1" data-i18n-aria="moveUp" aria-label="Move up">↑</button>
+            <button type="button" data-nx="0" data-ny="1" data-i18n-aria="moveDown" aria-label="Move down">↓</button>
+            <button type="button" data-nx="1" data-ny="0" data-i18n-aria="moveRight" aria-label="Move right">→</button>
             <output id="outNudge" class="num">0, 0</output>
           </div>
-          <label for="rngBlur">边缘柔化</label>
+          <label for="rngBlur" data-i18n="blurLabel">Edge softening</label>
           <div class="row"><input id="rngBlur" type="range" min="0" max="3" step="0.05"><output id="outBlur" class="num">0</output></div>
-          <label for="rngGrow">擦除范围</label>
+          <label for="rngGrow" data-i18n="growLabel">Erase range</label>
           <div class="row"><input id="rngGrow" type="range" min="0" max="12" step="1"><output id="outGrow" class="num">0</output></div>
         </div>
-        <button type="button" id="btnMore" class="btn wide">在更多字体里再找一遍</button>
+        <button type="button" id="btnMore" class="btn wide" data-i18n="moreFonts">Search more fonts</button>
       </details>
 
       <div class="actions">
-        <button type="button" id="btnCancel" class="btn">取消</button>
-        <button type="button" id="btnErase" class="btn">只擦除</button>
-        <button type="button" id="btnCompare" class="btn">按住看原图</button>
-        <button type="button" id="btnApply" class="btn primary">应用</button>
+        <button type="button" id="btnCancel" class="btn" data-i18n="cancel">Cancel</button>
+        <button type="button" id="btnErase" class="btn" data-i18n="eraseOnly">Erase only</button>
+        <button type="button" id="btnCompare" class="btn" data-i18n="compare">Hold to see original</button>
+        <button type="button" id="btnApply" class="btn primary" data-i18n="apply">Apply</button>
       </div>
     </section>
   </aside>
@@ -435,48 +436,48 @@ input[type="range"] { accent-color: var(--accent); min-width: 0; }
 
   <div id="offSheet" class="sheet" hidden>
     <div class="sheet-card" role="dialog" aria-labelledby="offTitle">
-      <h2 id="offTitle">离线使用</h2>
-      <div class="seg" role="radiogroup" aria-label="字体从哪里来">
-        <button type="button" role="radio" id="modeOnline" aria-checked="true">在线</button>
-        <button type="button" role="radio" id="modeOffline" aria-checked="false">离线</button>
+      <h2 id="offTitle" data-i18n="offlineTitle">Use offline</h2>
+      <div class="seg" role="radiogroup" data-i18n-aria="modeAria" aria-label="Where fonts come from">
+        <button type="button" role="radio" id="modeOnline" aria-checked="true" data-i18n="online">Online</button>
+        <button type="button" role="radio" id="modeOffline" aria-checked="false" data-i18n="offline">Offline</button>
       </div>
       <p id="offDesc"></p>
       <div id="packList" class="packs"></div>
       <p id="offStore" class="store"></p>
       <div class="actions">
-        <button type="button" id="offGo" class="btn" hidden>下载</button>
-        <button type="button" id="offClose" class="btn primary">完成</button>
+        <button type="button" id="offGo" class="btn" hidden data-i18n="download">Download</button>
+        <button type="button" id="offClose" class="btn primary" data-i18n="done">Done</button>
       </div>
     </div>
   </div>
 
   <div id="privSheet" class="sheet" hidden>
     <div class="sheet-card doc" role="dialog" aria-labelledby="privTitle">
-      <h2 id="privTitle">隐私与声明</h2>
-      <h3>图片和 PDF 不会离开你的设备</h3>
-      <p>打开、识别、改字、保存，全部在你的浏览器里完成。本应用没有后台服务器，不上传、不保存、不收集你的图片、PDF 和文字，也没有统计或广告代码。</p>
-      <p>应用只向本站请求程序和字体文件。网站由 GitHub Pages 托管，GitHub 会像其它网站一样记录访问日志（例如 IP 地址），这些记录不含你的图片和文件。</p>
-      <p>离线字体包和设置存在本机浏览器里，可以在“设置离线使用”里删除；删除这个网页的网站数据也会一并清除。</p>
-      <h3>源代码公开</h3>
-      <p>全部源代码以 GNU AGPL v3 开源，可以查看、核对上面的说法：<a href="https://github.com/jccx/text-overwrite" target="_blank" rel="noopener">github.com/jccx/text-overwrite</a></p>
-      <h3>使用责任</h3>
-      <p>本工具仅供合法用途。修改后的图片和文件如何使用、由此产生的一切后果，由使用者自行负责。请勿用于伪造或篡改证件、票据、合同、聊天记录、截图证据等，或侵犯他人权利。</p>
-      <p>本工具按“现状”提供，不保证识别、字体匹配或修改结果准确；开发者不对因使用本工具造成的任何损失或法律责任负责。</p>
-      <div class="actions"><button type="button" id="privClose" class="btn primary">知道了</button></div>
+      <h2 id="privTitle" data-i18n="privacyTitle">Privacy and terms</h2>
+      <h3 data-i18n="privH1">Images and PDFs never leave your device</h3>
+      <p data-i18n="privP1">Opening, recognising, editing and saving all happen in your browser. This app has no backend server: it does not upload, store or collect your images, PDFs or text, and it has no analytics or advertising code.</p>
+      <p data-i18n="privP2">The app only requests its program and font files from this site. The site is hosted on GitHub Pages, and GitHub keeps access logs like any other website (for example, IP addresses); those logs contain none of your images or files.</p>
+      <p data-i18n="privP3">Offline font packs and settings are stored in this browser; you can delete them under “Set up offline use”, and clearing this site’s data removes them too.</p>
+      <h3 data-i18n="privH2">Source code is public</h3>
+      <p><span data-i18n="privP4">All source code is open source under GNU AGPL v3; you can read it to check the claims above:</span> <a href="https://github.com/jccx/text-overwrite" target="_blank" rel="noopener">github.com/jccx/text-overwrite</a></p>
+      <h3 data-i18n="privH3">Responsibility for use</h3>
+      <p data-i18n="privP5">This tool is for lawful use only. How edited images and files are used, and any consequences, are the user’s own responsibility. Do not use it to forge or alter IDs, receipts, contracts, chat records, screenshot evidence or anything else, or to infringe other people’s rights.</p>
+      <p data-i18n="privP6">This tool is provided “as is”, with no guarantee that recognition, font matching or edits are accurate; the developers are not liable for any loss or legal responsibility arising from its use.</p>
+      <div class="actions"><button type="button" id="privClose" class="btn primary" data-i18n="gotIt">Got it</button></div>
     </div>
   </div>
 
   <div id="sheet" class="sheet" hidden>
     <div class="sheet-card" role="dialog" aria-labelledby="sheetTitle">
-      <h2 id="sheetTitle">保存图片</h2>
-      <p id="sheetHow">长按下面的图片选“存储到照片”；电脑上右键选“图片另存为”。</p>
-      <label id="pdfOpts" class="opt-row" hidden><input type="checkbox" id="pdfFlat"><span>把改过的页整页转成图片（旧文字彻底去掉；这些页不能再选中、搜索文字，文件会变大）</span></label>
-      <p id="saveNote" class="save-note" hidden>修改后的图片请合法使用，后果由使用者自负。</p>
-      <div class="sheet-img"><img id="sheetImg" alt="修改后的图片"></div>
+      <h2 id="sheetTitle">Save image</h2>
+      <p id="sheetHow">Long-press the image below and choose “Save to Photos”; on a computer, right-click and choose “Save image as”.</p>
+      <label id="pdfOpts" class="opt-row" hidden><input type="checkbox" id="pdfFlat"><span data-i18n="flattenOpt">Flatten the edited pages into images (the old text is gone for good; those pages can no longer be selected or searched, and the file gets bigger)</span></label>
+      <p id="saveNote" class="save-note" hidden>Please use the edited image lawfully; you are responsible for how it is used.</p>
+      <div class="sheet-img"><img id="sheetImg" data-i18n-alt="savedImageAlt" alt="Edited image"></div>
       <div class="actions">
-        <button type="button" id="sheetShare" class="btn" hidden>存到相册 / 分享</button>
-        <a id="sheetLink" class="btn" download>直接下载</a>
-        <button type="button" id="sheetClose" class="btn primary">完成</button>
+        <button type="button" id="sheetShare" class="btn" hidden>Save to Photos / Share</button>
+        <a id="sheetLink" class="btn" download>Download</a>
+        <button type="button" id="sheetClose" class="btn primary" data-i18n="done">Done</button>
       </div>
     </div>
   </div>
@@ -1878,7 +1879,7 @@ function ocrLoad(onProgress) {
   if (OCR.p) return OCR.p;
   OCR.p = (async () => {
     const note = t => { if (OCR.progress) OCR.progress(t); };
-    note('正在准备页面自带的识别（只在第一次）…');
+    note('ocr-prep');
     await tick();
     /* the Latin classifier: int8 weights, one row per output */
     if (typeof OCR_NET !== 'undefined') {
@@ -1935,7 +1936,7 @@ function ocrLoad(onProgress) {
           B.lasp[t] = Math.log(w / h); B.ch[t] = part[k]; B.pl[t] = pi; B.rare[t] = i0 + k >= nCommon && i0 + k < han1.length + han2.length ? 1 : 0;
         }
         done += part.length;
-        note('正在准备页面自带的识别 ' + Math.round((done / total) * 100) + '%（只在第一次）');
+        note('ocr-prep-pct:' + Math.round((done / total) * 100));
         await tick();
       }
     }
@@ -2977,6 +2978,631 @@ let toastTimer = 0;
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3200); }
 
 /* =====================================================================
+   app/i18n.js — the interface in two languages. English is the default;
+   the header button switches to Chinese with one click, and back.
+   The choice is remembered on the device (localStorage, overwrite.lang),
+   so a reload keeps it. navigator.language is deliberately ignored.
+   Every user-facing string lives in I18N below, keyed by a stable id;
+   t(key, vars) fills in {name} style placeholders. Static text in
+   src/index.html carries data-i18n / data-i18n-ph / data-i18n-aria /
+   data-i18n-alt attributes; setLang() applies the dictionary to them,
+   then re-renders the dynamic parts of the page (find box, offline
+   sheet, font list, open edit) in the new language. Toasts and the
+   match status are transient, so they are cleared rather than
+   translated after the fact. The save sheet is filled in by save()/pdfSave() when it
+   opens, so it keeps the language it was generated in and is not part of the static pass. Font proper names, the demo poster text
+   and CJK measurement strings are data, not interface, and stay as is.
+   ===================================================================== */
+const I18N_LANG_KEY = 'overwrite.lang';
+const I18N = {
+  "en": {
+    "appTitle": "Text Overwrite",
+    "brandHtml": "Text <span class=\"mark-sel\">Overwrite</span>",
+    "langAria": "Switch language",
+    "openImage": "Open image",
+    "openImagePdf": "Open image / PDF",
+    "undo": "Undo",
+    "save": "Save",
+    "stageAria": "Image workspace",
+    "zoomAria": "Zoom",
+    "zoomOut": "Zoom out",
+    "fit": "Fit",
+    "zoomIn": "Zoom in",
+    "pagerAria": "Turn pages",
+    "prevPage": "Previous page",
+    "goToPage": "Go to a page",
+    "nextPage": "Next page",
+    "dropHint": "Release to open this image",
+    "dropHintPdf": "Release to open this file",
+    "findPhPdf": "Search the text in this PDF",
+    "findPhPic": "Search the text in this image",
+    "find": "Search",
+    "prevHit": "Previous occurrence",
+    "nextHit": "Next occurrence",
+    "reviewAgain": "Review again",
+    "ocrGo": "Recognise the text in images",
+    "ocrStop": "Stop",
+    "step1T": "Select the text to change",
+    "step1D": "Drag a box around it on the image, covering just the text and its background. One style at a time.",
+    "step2T": "Check the original text",
+    "step2D": "Chinese, English, or mixed text all work. It is used to match the font, weight, size, spacing and colour.",
+    "step3T": "Type the new text, then Apply",
+    "step3D": "The old text is erased and the background filled back in. With the same number of characters, the new text lands where the old was; with a different count, the original indent, spacing, gaps and line spacing are kept.",
+    "offlineFonts": "Fonts",
+    "offlineSettings": "Set up offline use",
+    "fineArtifact": "Pinch to zoom and move the image; on a computer, scroll to zoom and hold Space to drag. Images are processed on your device. When the original text is opened in Claude, Claude reads it (only the small boxed area is sent, and you are asked first); on the shared web page, the built-in reader reads it on your device: common Hei, Song and English print faces can be read, while handwriting and decorative type may be read wrong, so type those in by hand.",
+    "finePages": "Pinch to zoom and move the image; on a computer, scroll to zoom and hold Space to drag. Images are only processed on your device and never uploaded. The original text is read by the built-in reader on the page: common Hei, Song and English print faces can be read; handwriting and decorative type may be read wrong, so type those in by hand. You can also open a PDF: change it page by page, with the original text taken straight from the PDF, and on saving the new text is written back into the PDF as real text while everything else stays the same; to change the same word in several places, use “Find” above to go through them one by one, so none is missed; for text in images and scanned pages, tap “Recognise the text in images” before searching.",
+    "privacy": "Privacy and terms",
+    "origLabel": "Original text",
+    "origHint": "what the picture says now",
+    "origPh": "Type what the picture says, to match the font",
+    "ocrRead": "Recognise",
+    "ocrReread": "Re-read",
+    "newLabel": "New text",
+    "newPh": "What to change it to",
+    "specFont": "Font",
+    "specWeight": "Weight",
+    "specSize": "Size",
+    "specColor": "Colour",
+    "specMatch": "Match",
+    "specSample": "Aa Text 123",
+    "candsAria": "Other close fonts",
+    "tune": "Fine-tune",
+    "familyLabel": "Font",
+    "upload": "Upload",
+    "weightLabel": "Weight",
+    "italic": "Italic",
+    "italicSuffix": " italic",
+    "sizeLabel": "Size",
+    "sizeDown": "Decrease size",
+    "sizeUp": "Increase size",
+    "trackLabel": "Letter spacing",
+    "trackDown": "Tighten spacing",
+    "trackUp": "Loosen spacing",
+    "colorLabel": "Colour",
+    "hexAria": "Hex colour",
+    "alignLabel": "Alignment",
+    "alignLeft": "Left",
+    "alignCenter": "Centre",
+    "alignRight": "Right",
+    "nudgeLabel": "Position",
+    "moveLeft": "Move left",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "moveRight": "Move right",
+    "blurLabel": "Edge softening",
+    "growLabel": "Erase range",
+    "moreFonts": "Search more fonts",
+    "cancel": "Cancel",
+    "eraseOnly": "Erase only",
+    "compare": "Hold to see original",
+    "apply": "Apply",
+    "offlineTitle": "Use offline",
+    "modeAria": "Where fonts come from",
+    "online": "Online",
+    "offline": "Offline",
+    "download": "Download",
+    "done": "Done",
+    "privacyTitle": "Privacy and terms",
+    "privH1": "Images and PDFs never leave your device",
+    "privP1": "Opening, recognising, editing and saving all happen in your browser. This app has no backend server: it does not upload, store or collect your images, PDFs or text, and it has no analytics or advertising code.",
+    "privP2": "The app only requests its program and font files from this site. The site is hosted on GitHub Pages, and GitHub keeps access logs like any other website (for example, IP addresses); those logs contain none of your images or files.",
+    "privP3": "Offline font packs and settings are stored in this browser; you can delete them under “Set up offline use”, and clearing this site’s data removes them too.",
+    "privH2": "Source code is public",
+    "privP4": "All source code is open source under GNU AGPL v3; you can read it to check the claims above:",
+    "privH3": "Responsibility for use",
+    "privP5": "This tool is for lawful use only. How edited images and files are used, and any consequences, are the user’s own responsibility. Do not use it to forge or alter IDs, receipts, contracts, chat records, screenshot evidence or anything else, or to infringe other people’s rights.",
+    "privP6": "This tool is provided “as is”, with no guarantee that recognition, font matching or edits are accurate; the developers are not liable for any loss or legal responsibility arising from its use.",
+    "gotIt": "Got it",
+    "saveImageTitle": "Save image",
+    "savePdfTitle": "Save PDF",
+    "saveImageHow": "Long-press the image below and choose “Save to Photos”; on a computer, right-click and choose “Save image as”.",
+    "pdfGenerating": "Generating PDF…",
+    "flattenOpt": "Flatten the edited pages into images (the old text is gone for good; those pages can no longer be selected or searched, and the file gets bigger)",
+    "saveNoteImg": "Please use the edited image lawfully; you are responsible for how it is used.",
+    "saveNotePdf": "Please use the edited file lawfully; you are responsible for how it is used.",
+    "savedImageAlt": "Edited image",
+    "shareImage": "Save to Photos / Share",
+    "sharePdf": "Save to Files / Share",
+    "downloadPdf": "Download PDF",
+    "saveLeft": " Reminder: {left} more occurrence(s) of “{q}” still to change.",
+    "reportSize": " ({size})",
+    "fileSuffix": "-edited",
+    "saved": "Saved",
+    "imageGenFail": "Could not generate the image",
+    "openPdfFail": "This PDF cannot be opened",
+    "openImageFail": "This image cannot be opened. Try another PNG or JPG.",
+    "openFileFail": "This file cannot be opened",
+    "newTextEmpty": "Type the replacement in “New text” first",
+    "newTextSame": "The new text is the same as the original. Change it, then apply.",
+    "fontAdded": "Font added: {name}",
+    "fontUnreadable": "This font file cannot be read. Use TTF, OTF or WOFF2.",
+    "uploadedFont": "Uploaded font",
+    "pastedImage": "Pasted image",
+    "prevApplied": "The previous change has been applied. You can undo it.",
+    "noTextInBox": "No clear text found in the box. Shrink the box to just the text and its background and try again.",
+    "demoLabel": "Sample image",
+    "demoHint": "Sample image · drag a box around any text to try it",
+    "imageTooBig": "The image is large, so it has been scaled down to a longest side of 4096 pixels",
+    "ocrFailed": "Recognition could not start. Please try again.",
+    "ocrRunningPic": "Recognising the text in the image…",
+    "ocrRunningPage": "Recognising the image on page {n}…",
+    "ocrNeedPic": "The text in the image needs to be recognised once before it can be searched.",
+    "ocrNeedPages": "Pages {pages} contain images or scanned content; their text needs to be recognised once before it can be found.",
+    "findSearching": "Searching… checked {done} / {total} pages",
+    "findNone": "No match for “{q}”.",
+    "findNoneOcrHint": "Text in images and scanned pages needs to be recognised first: tap “Recognise the text in images” below.",
+    "findNoneUnreadable": "Text that cannot be recognised (handwriting, decorative type, too blurry) cannot be found, and neither can phrases that run across lines.",
+    "findNoneCrossLine": "Phrases that run across lines cannot be found.",
+    "findFoundTotal": "Total: {n} occurrences",
+    "findFoundSoFar": "Found {n} so far",
+    "findOnPages": " (on pages {pages})",
+    "findStillSearching": ", still checking {done} / {total} pages",
+    "findAllUnchanged": " None changed yet.",
+    "findChangedSome": " Changed {done} of {n}, {left} left.",
+    "findAllChanged": " All changed.",
+    "findCurrentHit": " Now at occurrence {i}.",
+    "findOcrWarning": " The text in images was recognised, so it may contain errors. Please check it by eye.",
+    "findOcrNotDone": " The images and scanned pages have not been recognised yet.",
+    "enterOrig": "After you type the original text, the font is matched automatically.",
+    "noOrig": "No original text: size and position are estimated from the old text’s outline. Type the original text to match a font.",
+    "loadingFonts": "Loading fonts…",
+    "loadingCand": "Loading candidate fonts {d} / {t}{slow}",
+    "firstSlow": " (slow the first time)",
+    "matchingFonts": "Matching fonts…",
+    "matchingPairs": "Matching Latin + CJK font pairs {d} / {t}",
+    "noMatch": "No font could be matched. You can pick one by hand under “Fine-tune”.",
+    "ocrDoubtFilled": "This text was read with low confidence; the closest result has been filled in. Please check and correct it.",
+    "ocrDoubt": "Some characters may have been read wrong. Please check the original text above.",
+    "noCloseFont": "No very close font was found. You can pick one by hand under “Fine-tune”, or upload a font file.",
+    "tryMore": "If it is not close enough, “Fine-tune” can search more fonts.",
+    "pdfOwnFont": "Using the PDF’s own font, matching the original.",
+    "pdfFontNamed": "The PDF says this text is set in {label}.",
+    "loadingFont": "Loading {font}…",
+    "fontLoadFail": "This font could not be loaded. Try another.",
+    "onlineLabel": "Load online",
+    "offlineLabel": "Offline · {packs}",
+    "listSep": ", ",
+    "listSepSemi": "; ",
+    "storageUsed": "Used on this device {used}{quota}",
+    "storageQuota": ", about {quota} allowed by the browser",
+    "offDescOffline": "Choose font packs to download to this device; afterwards fonts can be matched without a network. Fonts that are not downloaded are skipped, and only downloaded fonts and the device’s own fonts are used.",
+    "offDescOnline": "Fonts are loaded from the web as needed, so they take no space on the phone, but a network is needed. Recognition and editing themselves need no network.",
+    "packDelete": "Delete",
+    "packFams": "{n} fonts, about {size}",
+    "packPdfDesc": "Character tables, standard fonts and image decoding used when opening PDFs, about {size}",
+    "packDownloaded": " · Downloaded",
+    "packPart": " · Not fully downloaded, can continue",
+    "packDownloading": " · Downloading {pct}%",
+    "offGoStop": "Stop",
+    "offGoDownload": "Download selected (about {size})",
+    "noCacheSupport": "This browser does not support saving offline",
+    "noNetworkPacks": "No network connection, so the font packs cannot be downloaded",
+    "packFailed": "{pack} had {n} files that did not download. Tap download again to continue.",
+    "packsSaved": "The font packs are saved on this device and can now be used offline",
+    "confirmBackOnline": "Going back online will delete the fonts downloaded to this device (about {size}). Delete them?",
+    "backOnline": "Switched back online; the fonts on this device have been deleted",
+    "packLatin": "English fonts",
+    "packSc": "Simplified Chinese fonts",
+    "packCjk": "Traditional Chinese, Japanese and Korean fonts",
+    "packPdfName": "PDF components",
+    "groupPdfFonts": "Fonts in this PDF",
+    "groupDevice": "Device fonts",
+    "groupUploaded": "Uploaded",
+    "groupChinese": "Chinese",
+    "groupSans": "Sans-serif",
+    "groupSerif": "Serif",
+    "groupMono": "Monospace",
+    "groupHand": "Handwriting",
+    "groupDisplay": "Display",
+    "groupJapanese": "Japanese",
+    "groupKorean": "Korean",
+    "ocrFailStart": "The built-in reader could not start ({reason}). Tap “Recognise” again to retry, or type the original text by hand.",
+    "ocrUnknown": "unknown reason",
+    "ocrUnreadable": "The built-in reader cannot read this text well (most likely handwriting or decorative type). Please type the original text above by hand.",
+    "ocrNoText": "No text was read. Please type the original text by hand.",
+    "ocrNotRecognised": "No text was recognised. Please type the original text by hand.",
+    "ocrReadingBox": "Recognising the text in the box…",
+    "ocrRereading": "Re-reading with the stronger model, one moment…",
+    "ocrRereadChanged": "The re-reading changed the original text. Please check it.",
+    "ocrSameResult": "The re-reading gave the same result. If the original text is wrong, edit it in the input box above.",
+    "ocrRateLimited": "Recognition is temporarily out of turns. Please type the original text by hand.",
+    "ocrFailed2": "Recognition did not succeed. Please type the original text by hand, or tap “Recognise” to try again.",
+    "ocrReadingOut": "Reading the text in the box…",
+    "ocrPreparing": "Preparing the built-in reader (first time only)…",
+    "ocrPreparingPct": "Preparing the built-in reader {pct}% (first time only)",
+    "pdfOwnLabel": "PDF’s own · {label}",
+    "pdfMissingFont": "The PDF’s own fonts do not have “{chars}”",
+    "pdfMissingAlt": " Those characters will be shown in another font. You can change the font under “Fine-tune”.",
+    "pdfMissingSwitch": " The new text will use the closest font instead: {font}.",
+    "pdfDeviceFontNote": "This is a device font, so it cannot go into the PDF: this change will be saved as a pasted image. For real text, change to a font from the font library under “Fine-tune”.",
+    "pdfMissingInFont": "“{font}” does not have “{chars}”",
+    "pdfMissingPic": " Those characters will be shown in another font, and this change will be saved as a pasted image. You can change the font under “Fine-tune”.",
+    "artifactOnlyPdf": "This version can only open images; for PDFs use the web version",
+    "openingPdf": "Opening PDF…",
+    "openingPage": "Opening page {n}…",
+    "openingPrefix": "Opening",
+    "pdfLibFail": "The PDF components did not load. Please try again online.",
+    "pdfPwWrong": "Wrong password, please try again",
+    "pdfPwAsk": "This PDF is password-protected. Please enter the password.",
+    "pdfNoPw": "No password, so this PDF cannot be opened",
+    "pdfDamaged": "This PDF cannot be opened; the file may be damaged",
+    "pageShowFail": "Page {n} could not be shown",
+    "goToPagePrompt": "Go to which page? (1 – {n})",
+    "pagesList": "page {pages}",
+    "reportWholeProtected": "This PDF is protected, so it cannot be changed in the original file.",
+    "reportWholeUnusual": "The internal structure of this PDF is unusual, so it cannot be changed in the original file.",
+    "reportWholeSuffix": "Saved as a new file instead: every page has been turned into an image, and text can no longer be selected or searched.",
+    "reportFlat": "{pages} have been turned into whole-page images: the old text is no longer in the file, and text on those pages can no longer be selected or searched. The other pages are unchanged.",
+    "reportStart": "Changes are on {pages}.",
+    "reportTextOnly": "The new text is real text, written into the PDF, and can be selected, searched and copied; everything else is unchanged.",
+    "reportTextAndPics": "{text} of the new text is real text that can be selected, searched and copied; the other {pics} are pasted images ({whys}).",
+    "reportPicsOnly": "The new text is a pasted image ({dpi} dpi) and cannot be selected or searched{whys}. Everything else is unchanged.",
+    "reportWhys": ": {whys}",
+    "reportCovered": " Note: on {pages}, {n} old characters could not be removed from the file, only covered up; search or copy can still find them. To remove them completely, tick “Flatten pages into images” below.",
+    "reportUnchecked": " The old text could not be checked for complete removal; to be safe, tick “Flatten pages into images” below.",
+    "reportChecked": " Checked: the replaced old text has been removed from the file and can no longer be found by search or copy.",
+    "reportAnnots": " The {n} notes or form fields the changes had have been merged into the page.",
+    "pdfNoEdits": "This PDF has no changes yet",
+    "pdfSaveProtected": "This PDF is protected and has more than 40 pages, so the whole file cannot be saved as images. Remove the protection with another tool first.",
+    "pdfSaveUnreadable": "The internal structure of this PDF is unusual and it has more than 40 pages, so the whole file cannot be saved as images.",
+    "pdfSaveError": "An error occurred while generating the PDF ({msg}). Try ticking “Flatten pages into images” and saving again.",
+    "whyImage": "not PDF text (text in a scan or picture)",
+    "whyNested": "the old text is in a nested object",
+    "whyHidden": "a hidden text layer on a scan",
+    "whyStrip": "the old text is written in a way that cannot be removed cleanly",
+    "whyOps": "the structure of the page content is unusual",
+    "whyAnnot": "the change has a note or form field",
+    "whyOverlap": "overlaps another change",
+    "whySysfont": "the new text uses a device font, which cannot go into the PDF",
+    "whySynth": "uses a bold or italic the font itself does not have",
+    "whyGlyph": "the font is missing characters that are needed",
+    "whyFile": "the font file could not be fetched (download the font pack first when offline)",
+    "whyFont": "a font from another page was chosen",
+    "whyScript": "the new text needs joined-up typesetting",
+    "whySoft": "the edges of the original text are soft",
+    "whyLook": "as text it does not look like it does on screen",
+    "appliedErased": "Erased. You can select another area.",
+    "appliedLeft": "Applied. {left} more of the searched text still to change.",
+    "appliedAllFound": "Applied. All the occurrences found have been changed.",
+    "applied": "Applied. You can select other text."
+  },
+  "zh": {
+    "appTitle": "查缺补漏",
+    "brandHtml": "查缺补<span class=\"mark-sel\">漏</span>",
+    "langAria": "切换语言",
+    "openImage": "打开图片",
+    "openImagePdf": "打开图片 / PDF",
+    "undo": "撤销",
+    "save": "保存",
+    "stageAria": "图片工作区",
+    "zoomAria": "缩放",
+    "zoomOut": "缩小",
+    "fit": "适应",
+    "zoomIn": "放大",
+    "pagerAria": "翻页",
+    "prevPage": "上一页",
+    "goToPage": "跳到某一页",
+    "nextPage": "下一页",
+    "dropHint": "松开，打开这张图片",
+    "dropHintPdf": "松开，打开这个文件",
+    "findPhPdf": "查找这份 PDF 里的文字",
+    "findPhPic": "查找图片里的文字",
+    "find": "查找",
+    "prevHit": "上一处",
+    "nextHit": "下一处",
+    "reviewAgain": "再看一遍",
+    "ocrGo": "识别图片里的文字",
+    "ocrStop": "停止",
+    "step1T": "框住要改的字",
+    "step1D": "在图片上拖出一个框，只包住文字和它的底色。一次框一种样式。",
+    "step2T": "核对原文字",
+    "step2D": "中文、英文、中英混排都可以。用它比对出字体、字重、字号、字距和颜色。",
+    "step3T": "输入新文字，点应用",
+    "step3D": "旧字被擦掉，背景补回来。字数相同，新字落在原来的位置；字数不同，保持原来的缩进、字距、间隔和行距。",
+    "offlineFonts": "字体",
+    "offlineSettings": "设置离线使用",
+    "fineArtifact": "双指缩放和移动图片；电脑上滚轮缩放，按住空格拖动。图片在你的设备上处理。原文字在 Claude 里打开时由 Claude 来读（只发送框里那一小块，并会先问你是否允许）；在分享出去的网页里由页面自带的识别在你的设备上读，常见的黑体、宋体和英文印刷体能读，手写体、艺术字读不准时请手动输入。",
+    "finePages": "双指缩放和移动图片；电脑上滚轮缩放，按住空格拖动。图片只在你的设备上处理，不会上传。原文字由页面自带的识别读出：常见的黑体、宋体和英文印刷体能读，手写体、艺术字读不准时请手动输入。也可以打开 PDF：一页一页地改，原文字直接取自 PDF，保存时新文字作为真正的文字写回 PDF，其它内容不变；同一个词要改多处时，用上面的“查找”逐处改，不会漏；图片和扫描页里的字，先点“识别图片里的文字”再查找。",
+    "privacy": "隐私与声明",
+    "origLabel": "原文字",
+    "origHint": "图片里现在写的",
+    "origPh": "照着图片输入，用来比对字体",
+    "ocrRead": "识别",
+    "ocrReread": "重读",
+    "newLabel": "新文字",
+    "newPh": "要换成什么",
+    "specFont": "字体",
+    "specWeight": "字重",
+    "specSize": "字号",
+    "specColor": "颜色",
+    "specMatch": "吻合",
+    "specSample": "Aa 文字 123",
+    "candsAria": "其它接近的字体",
+    "tune": "微调",
+    "familyLabel": "字体",
+    "upload": "上传",
+    "weightLabel": "字重",
+    "italic": "斜体",
+    "italicSuffix": " 斜体",
+    "sizeLabel": "字号",
+    "sizeDown": "减小字号",
+    "sizeUp": "增大字号",
+    "trackLabel": "字距",
+    "trackDown": "收紧字距",
+    "trackUp": "放宽字距",
+    "colorLabel": "颜色",
+    "hexAria": "十六进制颜色",
+    "alignLabel": "对齐",
+    "alignLeft": "左",
+    "alignCenter": "中",
+    "alignRight": "右",
+    "nudgeLabel": "位置",
+    "moveLeft": "左移",
+    "moveUp": "上移",
+    "moveDown": "下移",
+    "moveRight": "右移",
+    "blurLabel": "边缘柔化",
+    "growLabel": "擦除范围",
+    "moreFonts": "在更多字体里再找一遍",
+    "cancel": "取消",
+    "eraseOnly": "只擦除",
+    "compare": "按住看原图",
+    "apply": "应用",
+    "offlineTitle": "离线使用",
+    "modeAria": "字体从哪里来",
+    "online": "在线",
+    "offline": "离线",
+    "download": "下载",
+    "done": "完成",
+    "privacyTitle": "隐私与声明",
+    "privH1": "图片和 PDF 不会离开你的设备",
+    "privP1": "打开、识别、改字、保存，全部在你的浏览器里完成。本应用没有后台服务器，不上传、不保存、不收集你的图片、PDF 和文字，也没有统计或广告代码。",
+    "privP2": "应用只向本站请求程序和字体文件。网站由 GitHub Pages 托管，GitHub 会像其它网站一样记录访问日志（例如 IP 地址），这些记录不含你的图片和文件。",
+    "privP3": "离线字体包和设置存在本机浏览器里，可以在“设置离线使用”里删除；删除这个网页的网站数据也会一并清除。",
+    "privH2": "源代码公开",
+    "privP4": "全部源代码以 GNU AGPL v3 开源，可以查看、核对上面的说法：",
+    "privH3": "使用责任",
+    "privP5": "本工具仅供合法用途。修改后的图片和文件如何使用、由此产生的一切后果，由使用者自行负责。请勿用于伪造或篡改证件、票据、合同、聊天记录、截图证据等，或侵犯他人权利。",
+    "privP6": "本工具按“现状”提供，不保证识别、字体匹配或修改结果准确；开发者不对因使用本工具造成的任何损失或法律责任负责。",
+    "gotIt": "知道了",
+    "saveImageTitle": "保存图片",
+    "savePdfTitle": "保存 PDF",
+    "saveImageHow": "长按下面的图片选“存储到照片”；电脑上右键选“图片另存为”。",
+    "pdfGenerating": "正在生成 PDF…",
+    "flattenOpt": "把改过的页整页转成图片（旧文字彻底去掉；这些页不能再选中、搜索文字，文件会变大）",
+    "saveNoteImg": "修改后的图片请合法使用，后果由使用者自负。",
+    "saveNotePdf": "修改后的文件请合法使用，后果由使用者自负。",
+    "savedImageAlt": "修改后的图片",
+    "shareImage": "存到相册 / 分享",
+    "sharePdf": "存到“文件” / 分享",
+    "downloadPdf": "下载 PDF",
+    "saveLeft": " 提醒：查找的“{q}”还有 {left} 处没改。",
+    "reportSize": "（{size}）",
+    "fileSuffix": "-改字",
+    "saved": "已保存",
+    "imageGenFail": "生成图片失败",
+    "openPdfFail": "这个 PDF 打不开",
+    "openImageFail": "这张图片打不开，换一张 PNG 或 JPG 试试",
+    "openFileFail": "这个文件打不开",
+    "newTextEmpty": "先在“新文字”里输入要换成的内容",
+    "newTextSame": "新文字和原文字一样，改一下再应用",
+    "fontAdded": "已加入字体：{name}",
+    "fontUnreadable": "这个字体文件读不了，请用 TTF、OTF 或 WOFF2",
+    "uploadedFont": "上传字体",
+    "pastedImage": "粘贴的图片",
+    "prevApplied": "上一处修改已应用，可以撤销",
+    "noTextInBox": "框里没找到明显的文字。把框缩到只包住文字和底色再试。",
+    "demoLabel": "示例图片",
+    "demoHint": "示例图片 · 拖一个框，框住任意一处文字试试",
+    "imageTooBig": "图片很大，已缩小到最长边 4096 像素",
+    "ocrFailed": "识别没能启动，请再试一次",
+    "ocrRunningPic": "正在识别图片里的文字…",
+    "ocrRunningPage": "正在识别第 {n} 页的图片…",
+    "ocrNeedPic": "图片里的字要先识别一次，才能查找。",
+    "ocrNeedPages": "第 {pages} 页有图片或扫描内容，里面的字要先识别一次，才能查到。",
+    "findSearching": "正在查找… 已查 {done} / {total} 页",
+    "findNone": "没有找到“{q}”。",
+    "findNoneOcrHint": "图片和扫描页里的字，要先点下面的“识别图片里的文字”。",
+    "findNoneUnreadable": "识别不出来的字（手写、艺术字、太模糊的）查不到，跨行的词句也查不到。",
+    "findNoneCrossLine": "跨行的词句查不到。",
+    "findFoundTotal": "共 {n} 处",
+    "findFoundSoFar": "已找到 {n} 处",
+    "findOnPages": "（第 {pages} 页）",
+    "findStillSearching": "，还在查 {done} / {total} 页",
+    "findAllUnchanged": "都还没改。",
+    "findChangedSome": "已改 {done} 处，还剩 {left} 处。",
+    "findAllChanged": "全部改过了。",
+    "findCurrentHit": " 现在是第 {i} 处。",
+    "findOcrWarning": " 图片里的字是识别出来的，可能有错漏，请再人工核对一遍。",
+    "findOcrNotDone": " 图片和扫描页还没识别。",
+    "enterOrig": "输入原文字后，自动比对字体。",
+    "noOrig": "没有原文字：大小和位置按旧字的外框估算。填上原文字可比对出字体。",
+    "loadingFonts": "正在载入字体…",
+    "loadingCand": "正在载入候选字体 {d} / {t}{slow}",
+    "firstSlow": "（首次较慢）",
+    "matchingFonts": "正在比对字体…",
+    "matchingPairs": "正在比对中英文字体组合 {d} / {t}",
+    "noMatch": "没能比对出字体，可以在“微调”里手动选。",
+    "ocrDoubtFilled": "这段字读得没把握，已填上最接近的结果，请核对改正。",
+    "ocrDoubt": "有的字可能读错了，请核对上面的原文字。",
+    "noCloseFont": "没找到很接近的字体。可以在“微调”里手动选，或上传字体文件。",
+    "tryMore": "不够像的话，“微调”里可以在更多字体里再找一遍。",
+    "pdfOwnFont": "用的是 PDF 自带的字体，和原文一致。",
+    "pdfFontNamed": "PDF 里这段字写的字体名是 {label}。",
+    "loadingFont": "正在载入 {font}…",
+    "fontLoadFail": "这款字体没能载入，换一款试试。",
+    "onlineLabel": "在线加载",
+    "offlineLabel": "离线 · {packs}",
+    "listSep": "、",
+    "listSepSemi": "；",
+    "storageUsed": "本机已用 {used}{quota}",
+    "storageQuota": "，浏览器允许约 {quota}",
+    "offDescOffline": "选好字体包下载到这台设备，之后不联网也能比对字体。没下载的字体会跳过，只用已下载的和手机自带的字体。",
+    "offDescOnline": "字体用到哪款才从网上加载，不占手机空间，需要联网。识别和改字本身不用联网。",
+    "packDelete": "删除",
+    "packFams": "{n} 款，约 {size}",
+    "packPdfDesc": "打开 PDF 时用的字符表、标准字体和图像解码，约 {size}",
+    "packDownloaded": " · 已下载",
+    "packPart": " · 没下载完，可继续",
+    "packDownloading": " · 下载中 {pct}%",
+    "offGoStop": "停止",
+    "offGoDownload": "下载所选（约 {size}）",
+    "noCacheSupport": "这个浏览器不支持离线保存",
+    "noNetworkPacks": "连不上网，没法下载字体包",
+    "packFailed": "{pack} 有 {n} 个文件没下载成功，可以再点下载继续",
+    "packsSaved": "字体包已存到本机，可以离线使用了",
+    "confirmBackOnline": "切回在线会删除已下载到本机的字体（约 {size}）。删除吗？",
+    "backOnline": "已切回在线，本机字体已删除",
+    "packLatin": "英文字体",
+    "packSc": "简体中文字体",
+    "packCjk": "繁体、日文、韩文字体",
+    "packPdfName": "PDF 组件",
+    "groupPdfFonts": "这份 PDF 自带的字体",
+    "groupDevice": "本机字体",
+    "groupUploaded": "已上传",
+    "groupChinese": "中文",
+    "groupSans": "无衬线",
+    "groupSerif": "衬线",
+    "groupMono": "等宽",
+    "groupHand": "手写",
+    "groupDisplay": "展示",
+    "groupJapanese": "日文",
+    "groupKorean": "韩文",
+    "ocrFailStart": "页面自带的识别没能启动（{reason}）。可以再点一次“识别”重试，或手动输入原文字。",
+    "ocrUnknown": "未知原因",
+    "ocrUnreadable": "这段字页面自带的识别读不准（多半是手写体或艺术字）。请在上面手动输入原文字。",
+    "ocrNoText": "没读出文字，请手动输入原文字。",
+    "ocrNotRecognised": "没认出文字，请手动输入原文字。",
+    "ocrReadingBox": "正在识别框里的文字…",
+    "ocrRereading": "正在用更强的模型重读，稍等…",
+    "ocrRereadChanged": "重读后改了原文字，请核对",
+    "ocrSameResult": "重读结果和刚才一样。原文字不对的话，直接改上面的输入框。",
+    "ocrRateLimited": "识别次数暂时用完了，请手动输入原文字。",
+    "ocrFailed2": "识别没成功，请手动输入原文字，或点“识别”再试。",
+    "ocrReadingOut": "正在读出框里的文字…",
+    "ocrPreparing": "正在准备页面自带的识别（只在第一次）…",
+    "ocrPreparingPct": "正在准备页面自带的识别 {pct}%（只在第一次）",
+    "pdfOwnLabel": "PDF 自带 · {label}",
+    "pdfMissingFont": "PDF 自带的字体里没有“{chars}”",
+    "pdfMissingAlt": "，这几个字会用别的字体显示。可以在“微调”里换一款字体。",
+    "pdfMissingSwitch": "，新文字改用最接近的字体：{font}。",
+    "pdfDeviceFontNote": "这款是设备自带的字体，放不进 PDF：保存后这处是贴上去的图片。想要真正的文字，可以在“微调”里换一款字体库里的字体。",
+    "pdfMissingInFont": "“{font}”里没有“{chars}”",
+    "pdfMissingPic": "，这几个字会用别的字体显示，保存后这处是贴上去的图片。可以在“微调”里换一款字体。",
+    "artifactOnlyPdf": "这个版本只能打开图片；PDF 请用网页版",
+    "openingPdf": "正在打开 PDF…",
+    "openingPage": "正在打开第 {n} 页…",
+    "openingPrefix": "正在打开",
+    "pdfLibFail": "PDF 组件没加载成功，请联网后再试一次",
+    "pdfPwWrong": "密码不对，请再输入一次",
+    "pdfPwAsk": "这个 PDF 设了打开密码，请输入",
+    "pdfNoPw": "没有密码，打不开这个 PDF",
+    "pdfDamaged": "这个 PDF 打不开，文件可能已损坏",
+    "pageShowFail": "第 {n} 页没能显示出来",
+    "goToPagePrompt": "跳到第几页？（1 – {n}）",
+    "pagesList": "第 {pages} 页",
+    "reportWholeProtected": "这个 PDF 有保护，不能在原文件上改。",
+    "reportWholeUnusual": "这个 PDF 的内部结构比较特别，没法在原文件上改。",
+    "reportWholeSuffix": "已另存为新文件：每一页都转成了图片，文字不能再选中或搜索。",
+    "reportFlat": "{pages}已整页转成图片：旧文字不在文件里了，这些页上的文字也不能再选中或搜索。其它页没有变。",
+    "reportStart": "改动在{pages}。",
+    "reportTextOnly": "新文字是真正的文字，已写进 PDF，可以选中、搜索和复制；其它内容没有变。",
+    "reportTextAndPics": "其中 {text} 处的新文字是真正的文字，可以选中、搜索和复制；另外 {pics} 处是贴上去的图片（{whys}）。",
+    "reportPicsOnly": "新文字是贴上去的图片（{dpi} dpi），不能选中或搜索{whys}。其它内容没有变。",
+    "reportWhys": "：{whys}",
+    "reportCovered": " 注意：{pages}有 {n} 个旧字没能从文件里去掉，只是被盖住了，搜索或复制还能找到。要彻底去掉，请勾选下面的“整页转成图片”。",
+    "reportUnchecked": " 没能复查旧文字是否去净；要保险，请勾选下面的“整页转成图片”。",
+    "reportChecked": " 已复查：被替换的旧文字已从文件里去掉，搜索和复制都找不到了。",
+    "reportAnnots": " 改动处原有的 {n} 个批注或表单域已并入页面。",
+    "pdfNoEdits": "这份 PDF 还没有改动",
+    "pdfSaveProtected": "这个 PDF 有保护，超过 40 页，没法整份另存成图片。可以先用其它工具去掉保护再来。",
+    "pdfSaveUnreadable": "这个 PDF 的内部结构比较特别，超过 40 页，没法整份另存成图片。",
+    "pdfSaveError": "生成 PDF 时出错了（{msg}）。可以勾选“整页转成图片”再试一次。",
+    "whyImage": "那里不是 PDF 文字（扫描件或图片里的字）",
+    "whyNested": "旧文字在嵌套的对象里",
+    "whyHidden": "那里是扫描件上的隐藏文字层",
+    "whyStrip": "旧文字的写法特殊，没法干净地去掉",
+    "whyOps": "页面内容的结构特殊",
+    "whyAnnot": "改动处有批注或表单域",
+    "whyOverlap": "和另一处改动重叠",
+    "whySysfont": "新文字用的是设备自带的字体，放不进 PDF",
+    "whySynth": "用到了字体本身没有的粗体或斜体",
+    "whyGlyph": "字体里缺少要用的字",
+    "whyFile": "字体文件没取到（离线时需要先下载字体包）",
+    "whyFont": "选的是其它页的字体",
+    "whyScript": "新文字需要连写排版",
+    "whySoft": "原文字边缘是虚的",
+    "whyLook": "写成文字后和屏幕上的样子对不上",
+    "appliedErased": "已擦除。可以继续框选",
+    "appliedLeft": "已应用。查找的文字还剩 {left} 处没改",
+    "appliedAllFound": "已应用。查找到的几处都改完了",
+    "applied": "已应用。可以继续框选其它文字"
+  }
+};
+let I18N_LANG = 'en';
+/* the language in use now: 'en' or 'zh' */
+function i18nLang() { return I18N_LANG; }
+/* the string for key, with {var} placeholders filled in; falls back to English, then to the key itself */
+function t(key, vars) {
+  let s = (I18N[I18N_LANG] && I18N[I18N_LANG][key] != null) ? I18N[I18N_LANG][key] : (I18N.en[key] != null ? I18N.en[key] : key);
+  if (vars) for (const k in vars) s = s.split('{' + k + '}').join(String(vars[k]));
+  return s;
+}
+/* the name of an offline font pack (FONT_PACKS keys stay as they are; only the display name is translated) */
+function packDisplayName(k) {
+  const key = { latin: 'packLatin', sc: 'packSc', cjk: 'packCjk', pdf: 'packPdfName' }[k];
+  return key ? t(key) : (FONT_PACKS[k] ? FONT_PACKS[k].name : k);
+}
+/* the reader (reader/models.js) reports progress with language-neutral markers, so that its layer
+   stays free of the page's language code; the markers become words here */
+function ocrProgressText(s) {
+  if (typeof s !== 'string') return '';
+  if (s === 'ocr-prep') return t('ocrPreparing');
+  const m = /^ocr-prep-pct:(\d+)$/.exec(s);
+  if (m) return t('ocrPreparingPct', { pct: m[1] });
+  return s;
+}
+/* switch the whole page to lang ('en' or 'zh') and remember the choice */
+function setLang(lang) {
+  if (lang !== 'en' && lang !== 'zh') lang = 'en';
+  I18N_LANG = lang;
+  try { localStorage.setItem(I18N_LANG_KEY, lang); } catch (e) { /* private mode: this visit only */ }
+  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+  const mark = $('brandMark');
+  if (mark) mark.innerHTML = t('brandHtml');
+  const btn = $('btnLang');
+  if (btn) btn.textContent = lang === 'en' ? '中文' : 'English';
+  for (const el of document.querySelectorAll('[data-i18n]')) el.textContent = t(el.dataset.i18n);
+  for (const el of document.querySelectorAll('[data-i18n-ph]')) el.placeholder = t(el.dataset.i18nPh);
+  for (const el of document.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', t(el.dataset.i18nAria));
+  for (const el of document.querySelectorAll('[data-i18n-alt]')) el.alt = t(el.dataset.i18nAlt);
+  /* the installable build opens PDFs too, so its open / drop-hint wording differs from the artifact's */
+  if (typeof BUILD !== 'undefined' && BUILD === 'pages') {
+    $('btnOpen').textContent = t('openImagePdf');
+    $('dropHint').textContent = t('dropHintPdf');
+  }
+  /* transient text in the old language: clear it rather than translate it after the fact */
+  const toastEl = $('toast');
+  if (toastEl) { toastEl.hidden = true; }
+  try { clearTimeout(toastTimer); } catch (e) { /* toastTimer lives in util.js */ }
+  try { setStatus(''); } catch (e) { /* the panel may not exist yet */ }
+  try { findRender(); } catch (e) { /* no document open yet */ }
+  try { offRender(); } catch (e) { /* the offline sheet is pages-only */ }
+  try { buildFamilySelect(); } catch (e) { /* the font list may not exist yet */ }
+  if (S.demo) $('stageNote').textContent = S.edit ? t('demoLabel') : t('demoHint');
+  if (S.edit) { try { renderCands(); } catch (e) {} refresh(); }
+}
+/* wire the header button; called from boot(), before makeDemo() so the demo note is in the right language */
+function langInit() {
+  let saved = 'en';
+  try { saved = localStorage.getItem(I18N_LANG_KEY) || 'en'; } catch (e) { saved = 'en'; }
+  const btn = $('btnLang');
+  if (btn) btn.onclick = () => setLang(I18N_LANG === 'en' ? 'zh' : 'en');
+  setLang(saved === 'zh' ? 'zh' : 'en');
+}
+
+/* =====================================================================
    app/state.js — everything the page knows at any moment, in one object: S.
 
    The picture
@@ -3331,7 +3957,7 @@ function refresh() {
   const st = ed.st;
   renderLive();
   const px = st.px * st.sizeAdj;
-  $('mFont').textContent = famLabel(st.fam) + (st.italic ? ' 斜体' : '');
+  $('mFont').textContent = famLabel(st.fam) + (st.italic ? t('italicSuffix') : '');
   $('mFont').title = famLabel(st.fam);
   $('mWeight').textContent = st.weight;
   $('mSize').textContent = px.toFixed(1) + 'px';
@@ -3342,7 +3968,7 @@ function refresh() {
   sc.className = 'num' + (st.score == null ? '' : st.score >= 0.8 ? ' ok' : st.score < 0.6 ? ' low' : '');
   const sp = $('specSample'), tx = $('specText');
   sp.style.background = rgbHex(ed.an.bgColor);
-  tx.textContent = encT(st.fam, (ed.newText || ed.origText || 'Aa 文字 123').split('\n')[0]);
+  tx.textContent = encT(st.fam, (ed.newText || ed.origText || t('specSample')).split('\n')[0]);
   tx.style.cssText = 'font-family:' + famCss(st.fam) + ';font-weight:' + (st.fam.pdf ? st.fam.pdf.fw : st.weight) + ';font-style:' + (st.fam.pdf ? st.fam.pdf.fs : st.italic ? 'italic' : 'normal') +
     ';color:' + rgbHex(st.color) + ';letter-spacing:' + (st.trEm + st.trAdj).toFixed(4) + 'em';
   // controls
@@ -3367,7 +3993,7 @@ function refresh() {
   $('outNudge').textContent = st.dx.toFixed(1).replace('.0', '') + ', ' + st.dy.toFixed(1).replace('.0', '');
   $('rngBlur').value = st.blur; $('outBlur').textContent = st.blur.toFixed(2).replace(/0$/, '');
   $('btnMore').hidden = ed.tier >= 2 || scriptOf(ed.origText || 'a') !== 'latin';
-  $('btnOcr').textContent = ed.origText ? '重读' : '识别';
+  $('btnOcr').textContent = ed.origText ? t('ocrReread') : t('ocrRead');
   $('btnOcr').hidden = false;
   for (const ch of $('cands').children) ch.setAttribute('aria-pressed', ch.dataset.fam === st.fam.n ? 'true' : 'false');
 }
@@ -3395,9 +4021,9 @@ function renderCands() {
 function buildFamilySelect() {
   const sf = $('selFamily');
   sf.textContent = '';
-  const groups = [['这份 PDF 自带的字体', f => !!f.pdf], ['本机字体', f => f.sys && !f.custom && !f.pdf], ['已上传', f => f.custom], ['中文', f => !f.sys && (f.sc === 'sc' || f.sc === 'tc')],
-    ['无衬线', f => !f.sys && !f.sc && f.c === 's'], ['衬线', f => !f.sys && !f.sc && f.c === 'r'], ['等宽', f => !f.sys && !f.sc && f.c === 'm'],
-    ['手写', f => !f.sys && !f.sc && f.c === 'h'], ['展示', f => !f.sys && !f.sc && f.c === 'd'], ['日文', f => f.sc === 'jp'], ['韩文', f => f.sc === 'kr']];
+  const groups = [[t('groupPdfFonts'), f => !!f.pdf], [t('groupDevice'), f => f.sys && !f.custom && !f.pdf], [t('groupUploaded'), f => f.custom], [t('groupChinese'), f => !f.sys && (f.sc === 'sc' || f.sc === 'tc')],
+    [t('groupSans'), f => !f.sys && !f.sc && f.c === 's'], [t('groupSerif'), f => !f.sys && !f.sc && f.c === 'r'], [t('groupMono'), f => !f.sys && !f.sc && f.c === 'm'],
+    [t('groupHand'), f => !f.sys && !f.sc && f.c === 'h'], [t('groupDisplay'), f => !f.sys && !f.sc && f.c === 'd'], [t('groupJapanese'), f => f.sc === 'jp'], [t('groupKorean'), f => f.sc === 'kr']];
   const all = [...FAM.values()].filter(f => !f.comp);
   for (const [label, test] of groups) {
     const list = all.filter(test);
@@ -3433,7 +4059,7 @@ async function loadBlob(blob, name) {
   pdfClose();
   setImage(c, x, name || 'image', /jpe?g/i.test(blob.type) ? 'image/jpeg' : 'image/png', false);
   warmReader();
-  if (k < 1) toast('图片很大，已缩小到最长边 4096 像素');
+  if (k < 1) toast(t('imageTooBig'));
 }
 /* this canvas (c, with its context x) is the picture now: an open edit is dropped, the undo list starts empty.
    demo: it is the sample picture. */
@@ -3441,7 +4067,7 @@ function setImage(c, x, name, type, demo) {
   dropEdit();
   S.img = c; S.ictx = x; S.iw = c.width; S.ih = c.height; S.name = name.replace(/\.[^.]+$/, ''); S.type = type; S.demo = demo;
   S.undo = []; $('btnUndo').disabled = true;
-  $('stageNote').textContent = demo ? '示例图片 · 拖一个框，框住任意一处文字试试' : '';
+  $('stageNote').textContent = demo ? t('demoHint') : '';
   /* a picture of its own (not a page of a PDF) starts with nothing read and nothing looked for */
   if (!S.pdf) { S.pic = findNew(true); $('findIn').value = ''; }
   findRender();
@@ -3486,7 +4112,7 @@ function startEdit(userRect, keep, hit) {
   let carry = null;
   if (prev) {
     if (keep) carry = prev;
-    else if (prev.newText && prev.newText !== prev.origText && prev.live) { commit('text', true); toast('上一处修改已应用，可以撤销'); }
+    else if (prev.newText && prev.newText !== prev.origText && prev.live) { commit('text', true); toast(t('prevApplied')); }
     if (S.edit) { S.edit.matchToken++; restoreLive(); }
   }
   const ed = {
@@ -3511,11 +4137,11 @@ function startEdit(userRect, keep, hit) {
   autoRows($('inOrig')); autoRows($('inNew'));
   $('rngGrow').value = ed.an.grow; $('outGrow').textContent = ed.an.grow;
   renderCands();
-  if (!ed.an.found) setStatus('框里没找到明显的文字。把框缩到只包住文字和底色再试。', true);
+  if (!ed.an.found) setStatus(t('noTextInBox'), true);
   else if (ed.origLines.length) { setStatus(''); scheduleMatch(0); }
   else readText(ed);
   computeFit(ed); refresh();
-  if (S.demo) $('stageNote').textContent = '示例图片';
+  if (S.demo) $('stageNote').textContent = t('demoLabel');
 }
 
 /* =====================================================================
@@ -3787,7 +4413,7 @@ function commit(mode, quiet) {
   S.edit = null;
   $('pEdit').hidden = true; $('pIdle').hidden = false;
   const left = findApplied(ed, mode);
-  if (!quiet) toast(mode === 'erase' ? '已擦除。可以继续框选' : left > 0 ? '已应用。查找的文字还剩 ' + left + ' 处没改' : left === 0 ? '已应用。查找到的几处都改完了' : '已应用。可以继续框选其它文字');
+  if (!quiet) toast(mode === 'erase' ? t('appliedErased') : left > 0 ? t('appliedLeft', { left }) : left === 0 ? t('appliedAllFound') : t('applied'));
   requestDraw();
 }
 /* drop the open edit; with none open, take back the edit applied last */
@@ -3843,7 +4469,7 @@ async function runMatch() {
   /* and the PDF's own font, when the whole selection is set in one */
   if (ed.pdfFam && ed.ocr && ed.ocr.tier === 'pdf' && !fams.includes(ed.pdfFam)) fams.unshift(ed.pdfFam);
   setInk(an.color);
-  setStatus('正在载入字体…');
+  setStatus(t('loadingFonts'));
   await ensureCss(fams);
   if (stale()) return;
   let vars = [];
@@ -3853,8 +4479,8 @@ async function runMatch() {
       if (slant) vars.push({ fam: f, weight: w, italic: true });
     }
   }
-  vars = await loadFaces(vars, text, (d, t) => { if (!stale()) setStatus('正在载入候选字体 ' + d + ' / ' + t + (d < t ? '（首次较慢）' : '')); });
-  if (!stale()) setStatus('正在比对字体…');
+  vars = await loadFaces(vars, text, (d, tot) => { if (!stale()) setStatus(t('loadingCand', { d, t: tot, slow: d < tot ? t('firstSlow') : '' })); });
+  if (!stale()) setStatus(t('matchingFonts'));
   if (stale()) return;
   /* unusual gaps between words (columns, wide word spacing): anchor every word to where it sits.
      If that reading fits badly (the gaps were misjudged), fall back to treating the line as one run. */
@@ -3942,7 +4568,7 @@ async function runMatch() {
       if (c0) {
         await ensureCss(lat);
         if (stale()) return null;
-        const prog = (d, t) => { if (!stale()) setStatus('正在比对中英文字体组合 ' + d + ' / ' + t); };
+        const prog = (d, tot) => { if (!stale()) setStatus(t('matchingPairs', { d, t: tot })); };
         const n0 = res.length;
         const scoreNew = async list => { const k = res.length; if (!(await run1(await loadFaces(list, text, prog)))) return null; return res.slice(k).sort((a, b) => b.score - a.score); };
         // 1. Latin face, with the best CJK face held fixed
@@ -4051,7 +4677,7 @@ async function runMatch() {
     list.push({ fam: r.c.fam, weight: r.c.weight, italic: r.c.italic, iou: r.iou, score: r.score, rough: true });
   }
   ed.cands = list;
-  if (!refined.length) { setStatus('没能比对出字体，可以在“微调”里手动选。', true); renderCands(); return; }
+  if (!refined.length) { setStatus(t('noMatch'), true); renderCands(); return; }
   /* for a PDF, a font that can be put into the file keeps the new text real text, a device font makes it a picture:
      the former is taken when it fits nearly as well */
   let best = refined[0];
@@ -4071,9 +4697,9 @@ async function runMatch() {
     if (S.sample && (oddChar || best.iou < 0.68)) { ed.ocr.reread = true; ed.ocr.auto = true; recognize('default'); }
     else if (oddChar || (ed.ocr.tier === 'local' && best.iou < 0.68)) ed.ocr.doubt = true;
   }
-  if (ed.ocr && ed.ocr.doubt && !S.sample) { ed.ocr.doubt = false; setStatus(ed.ocr.reread && ed.ocr.tier === 'local' ? '这段字读得没把握，已填上最接近的结果，请核对改正。' : '有的字可能读错了，请核对上面的原文字。', true); }
-  else if (best.iou < 0.55) setStatus('没找到很接近的字体。可以在“微调”里手动选，或上传字体文件。', true);
-  else setStatus(ed.tier < 2 && scriptOf(text) === 'latin' && best.iou < 0.8 ? '不够像的话，“微调”里可以在更多字体里再找一遍。' : best.fam.pdf && ed.st.fam === best.fam ? '用的是 PDF 自带的字体，和原文一致。' : ed.pdfAlt ? $('matchStatus').textContent : hint ? 'PDF 里这段字写的字体名是 ' + hint.label + '。' : '', !!ed.pdfAlt);
+  if (ed.ocr && ed.ocr.doubt && !S.sample) { ed.ocr.doubt = false; setStatus(ed.ocr.reread && ed.ocr.tier === 'local' ? t('ocrDoubtFilled') : t('ocrDoubt'), true); }
+  else if (best.iou < 0.55) setStatus(t('noCloseFont'), true);
+  else setStatus(ed.tier < 2 && scriptOf(text) === 'latin' && best.iou < 0.8 ? t('tryMore') : best.fam.pdf && ed.st.fam === best.fam ? t('pdfOwnFont') : ed.pdfAlt ? $('matchStatus').textContent : hint ? t('pdfFontNamed', { label: hint.label }) : '', !!ed.pdfAlt);
   pdfFontNote(ed);
   renderCands();
 }
@@ -4092,10 +4718,10 @@ async function chooseFont(fam, weight, italic) {
   if (!ed) return;
   const c = { fam, weight: nearW(fam, weight), italic: !!italic };
   const text = ed.primaryText || ed.newText || ed.origText || 'Aa';
-  setStatus('正在载入 ' + famLabel(fam) + '…');
+  setStatus(t('loadingFont', { font: famLabel(fam) }));
   const ok = await ensureFace(c, (ed.origText + ed.newText) || text);
   if (S.edit !== ed) return;
-  if (!ok) { setStatus('这款字体没能载入，换一款试试。', true); refresh(); return; }
+  if (!ok) { setStatus(t('fontLoadFail'), true); refresh(); return; }
   setStatus('');
   let r = null;
   setInk(ed.an.color);
@@ -4120,7 +4746,7 @@ function setOrig(v, fromOcr) {
   ed.origLines = v.split('\n').map(s => s.trim()).filter(Boolean);
   if (fromOcr) { $('inOrig').value = v; autoRows($('inOrig')); if (!ed.newText) { ed.newText = findRepl(ed) || v; $('inNew').value = ed.newText; autoRows($('inNew')); } }
   if (ed.origLines.length) scheduleMatch(fromOcr ? 0 : 550);
-  else { ed.matchToken++; ed.st.matched = false; ed.st.score = null; ed.cands = []; renderCands(); computeFit(ed); refresh(); setStatus('输入原文字后，自动比对字体。'); }
+  else { ed.matchToken++; ed.st.matched = false; ed.st.score = null; ed.cands = []; renderCands(); computeFit(ed); refresh(); setStatus(t('enterOrig')); }
 }
 function inputsInit() {
   $('inOrig').addEventListener('compositionstart', () => { composing = true; });
@@ -4135,7 +4761,7 @@ function inputsInit() {
     pdfCoverNote(ed);
     if (!ed.st.matched && ed.an.found) {
       computeFit(ed);
-      if (!ed.origLines.length && ed.newText.trim() && !/正在/.test($('matchStatus').textContent)) setStatus('没有原文字：大小和位置按旧字的外框估算。填上原文字可比对出字体。');
+      if (!ed.origLines.length && ed.newText.trim() && !/Loading|Matching|Reading|Recognising|Preparing|正在/.test($('matchStatus').textContent)) setStatus(t('noOrig'));
     }
     refresh();
   });
@@ -4192,7 +4818,7 @@ async function readText(ed, force) {
   await Promise.race([S.sampleReady, new Promise(r => setTimeout(r, 1500))]);
   if (S.edit !== ed) return;
   if (S.sample) { recognize('quick'); return; }
-  const fail = () => setStatus('页面自带的识别没能启动（' + (OCR.err || '未知原因') + '）。可以再点一次“识别”重试，或手动输入原文字。', true);
+  const fail = () => setStatus(t('ocrFailStart', { reason: OCR.err || t('ocrUnknown') }), true);
   if (OCR.failed) {
     if (!force) { if (!ed.origText) fail(); return; }
     OCR.p = null; OCR.failed = false; OCR.err = '';
@@ -4209,7 +4835,7 @@ async function readText(ed, force) {
       ed.varDone = false;
       if (mirror) { ed.newText = ''; $('inNew').value = ''; }
       setOrig(guess, true);
-      setStatus('这段字读得没把握，已填上最接近的结果，请核对改正后再继续。', true);
+      setStatus(t('ocrDoubtFilled'), true);
     } else if (r && r.text && untouched && (force || r.text !== ed.origText)) {
       const mirror = !ed.newText || ed.newText === ed.origText;
       ed.ocr = { tier: 'local', text: r.text, reread: false, conf: r.conf, maybe: r.maybe, slots: r.slots };
@@ -4218,7 +4844,7 @@ async function readText(ed, force) {
       setOrig(r.text, true);
     } else if (!ed.origText) {
       if (OCR.failed) fail();
-      else setStatus(r && r.raw ? '这段字页面自带的识别读不准（多半是手写体或艺术字）。请在上面手动输入原文字。' : '没读出文字，请手动输入原文字。', true);
+      else setStatus(r && r.raw ? t('ocrUnreadable') : t('ocrNoText'), true);
     } else setStatus('');
   } finally { $('btnOcr').disabled = false; refresh(); }
 }
@@ -4230,26 +4856,26 @@ async function recognize(tier) {
   tier = tier || 'quick';
   const blob = await ocrCrop(ed);
   if (!blob || S.edit !== ed) return;
-  setStatus(tier === 'quick' ? '正在识别框里的文字…' : '正在用更强的模型重读，稍等…');
+  setStatus(tier === 'quick' ? t('ocrReadingBox') : t('ocrRereading'));
   $('btnOcr').disabled = true;
   try {
     const out = await S.sample.json(OCR_PROMPT, { images: [blob], modelTier: tier, cache: tier === 'quick' });
     if (S.edit !== ed) return;
     const text = out && typeof out.text === 'string' ? out.text.replace(/\r/g, '').split('\n').map(t => t.trim()).filter(Boolean).join('\n') : '';
     const untouched = !ed.origText || (ed.ocr && ed.origText === ed.ocr.text);   // empty, or still exactly what was read before
-    if (!text) { if (!ed.origText) setStatus('没认出文字，请手动输入原文字。', true); else setStatus(''); }
+    if (!text) { if (!ed.origText) setStatus(t('ocrNotRecognised'), true); else setStatus(''); }
     else if (untouched && text !== ed.origText) {
       const mirror = !ed.newText || ed.newText === ed.origText;
       const again = !!ed.origText;
       ed.ocr = { tier, text, reread: tier !== 'quick' || !!(ed.ocr && ed.ocr.reread) };
       if (mirror) { ed.newText = ''; $('inNew').value = ''; }
       setOrig(text, true);
-      if (again) toast('重读后改了原文字，请核对');
+      if (again) toast(t('ocrRereadChanged'));
     } else {
       if (ed.ocr) ed.ocr.reread = ed.ocr.reread || tier !== 'quick';
       const auto = ed.ocr && ed.ocr.auto;
       if (ed.ocr) ed.ocr.auto = false;
-      setStatus(tier === 'quick' || auto ? '' : '重读结果和刚才一样。原文字不对的话，直接改上面的输入框。');
+      setStatus(tier === 'quick' || auto ? '' : t('ocrSameResult'));
     }
   } catch (e) {
     if (S.edit !== ed) return;
@@ -4258,16 +4884,16 @@ async function recognize(tier) {
       S.sample = null;
       if (!ed.origText) { readText(ed); return; }
       setStatus('');
-    } else if (code === 'rate_limited') setStatus('识别次数暂时用完了，请手动输入原文字。', true);
-    else if (!ed.origText) setStatus('识别没成功，请手动输入原文字，或点“识别”再试。', true);
+    } else if (code === 'rate_limited') setStatus(t('ocrRateLimited'), true);
+    else if (!ed.origText) setStatus(t('ocrFailed2'), true);
     else setStatus('');
   } finally { $('btnOcr').disabled = false; }
 }
 /* read the selection on the device; null when the reader cannot run */
 async function readLocal(ed) {
-  const ok = await ocrLoad(t => { if (S.edit === ed) setStatus(t); });
+  const ok = await ocrLoad(msg => { if (S.edit === ed) setStatus(ocrProgressText(msg)); });
   if (!ok || S.edit !== ed) return null;
-  setStatus('正在读出框里的文字…');
+  setStatus(t('ocrReadingOut'));
   await tick(); await tick();
   if (S.edit !== ed) return null;
   return ocrReadLines(ed.an, ed.bands);
@@ -4382,15 +5008,15 @@ function controlsInit() {
     const f = e.target.files && e.target.files[0];
     e.target.value = '';
     if (!f) return;
-    try { await loadBlob(f, f.name); } catch (err) { toast(isPdf(f, f.name) ? '这个 PDF 打不开' : '这张图片打不开，换一张 PNG 或 JPG 试试'); }
+    try { await loadBlob(f, f.name); } catch (err) { toast(isPdf(f, f.name) ? t('openPdfFail') : t('openImageFail')); }
   };
   $('btnUndo').onclick = undo;
   $('btnCancel').onclick = dropEdit;
   $('btnApply').onclick = () => {
     const ed = S.edit;
     if (!ed) return;
-    if (!ed.newText.trim()) { toast('先在“新文字”里输入要换成的内容'); $('inNew').focus(); return; }
-    if (ed.newText === ed.origText) { toast('新文字和原文字一样，改一下再应用'); $('inNew').focus(); return; }
+    if (!ed.newText.trim()) { toast(t('newTextEmpty')); $('inNew').focus(); return; }
+    if (ed.newText === ed.origText) { toast(t('newTextSame')); $('inNew').focus(); return; }
     commit('text');
   };
   $('btnErase').onclick = () => commit('erase');
@@ -4441,7 +5067,7 @@ function controlsInit() {
     e.target.value = '';
     if (!f) return;
     try {
-      const name = f.name.replace(/\.[^.]+$/, '').replace(/["\\]/g, '').slice(0, 60) || '上传字体';
+      const name = f.name.replace(/\.[^.]+$/, '').replace(/["\\]/g, '').slice(0, 60) || t('uploadedFont');
       const face = new FontFace(name, await f.arrayBuffer());
       await face.load();
       document.fonts.add(face);
@@ -4449,8 +5075,8 @@ function controlsInit() {
       FAM.set(name, fam); if (!sysFams.includes(fam)) sysFams.push(fam);
       buildFamilySelect();
       if (S.edit) chooseFont(fam, S.edit.st.weight, S.edit.st.italic);
-      toast('已加入字体：' + name);
-    } catch (err) { toast('这个字体文件读不了，请用 TTF、OTF 或 WOFF2'); }
+      toast(t('fontAdded', { name }));
+    } catch (err) { toast(t('fontUnreadable')); }
   };
 }
 
@@ -4462,17 +5088,17 @@ function controlsInit() {
 async function save() {
   if (!S.img) return;
   if (S.pdf) { pdfSave(); return; }
-  $('sheetTitle').textContent = '保存图片'; $('saveNote').textContent = '修改后的图片请合法使用，后果由使用者自负。'; $('sheetHow').textContent = '长按下面的图片选“存储到照片”；电脑上右键选“图片另存为”。';
-  $('pdfOpts').hidden = true; $('sheetImg').parentElement.hidden = false; $('sheetShare').textContent = '存到相册 / 分享'; $('sheetLink').textContent = '直接下载';
+  $('sheetTitle').textContent = t('saveImageTitle'); $('saveNote').textContent = t('saveNoteImg'); $('sheetHow').textContent = t('saveImageHow');
+  $('pdfOpts').hidden = true; $('sheetImg').parentElement.hidden = false; $('sheetShare').textContent = t('shareImage'); $('sheetLink').textContent = t('download');
   if (S.edit && S.edit.live) commit('text', true);
   const left = findLeft();
-  if (left > 0) $('saveNote').textContent += ' 提醒：查找的“' + S.pic.find.q + '”还有 ' + left + ' 处没改。';
+  if (left > 0) $('saveNote').textContent += t('saveLeft', { q: S.pic.find.q, left });
   const jpg = S.type === 'image/jpeg';
   const blob = await new Promise(res => S.img.toBlob(res, S.type, jpg ? 0.95 : undefined));
-  if (!blob) { toast('生成图片失败'); return; }
-  const filename = (S.name || 'image') + '-改字.' + (jpg ? 'jpg' : 'png');
+  if (!blob) { toast(t('imageGenFail')); return; }
+  const filename = (S.name || 'image') + t('fileSuffix') + '.' + (jpg ? 'jpg' : 'png');
   if (S.downloads) {
-    try { await S.downloads.save({ filename, data: blob }); toast('已保存'); return; }
+    try { await S.downloads.save({ filename, data: blob }); toast(t('saved')); return; }
     catch (e) { if (e && e.code === 'declined') return; }
   }
   const url = URL.createObjectURL(blob);
@@ -4510,14 +5136,14 @@ function shortcutsInit() {
   window.addEventListener('keyup', e => { if (e.key === ' ') S.space = false; });
   window.addEventListener('paste', e => {
     const items = (e.clipboardData && e.clipboardData.items) || [];
-    for (const it of items) if (it.kind === 'file' && it.type.startsWith('image/')) { const f = it.getAsFile(); if (f) { e.preventDefault(); loadBlob(f, '粘贴的图片').catch(() => toast('这张图片打不开')); } return; }
+    for (const it of items) if (it.kind === 'file' && it.type.startsWith('image/')) { const f = it.getAsFile(); if (f) { e.preventDefault(); loadBlob(f, t('pastedImage')).catch(() => toast(t('openImageFail'))); } return; }
   });
   stage.addEventListener('dragover', e => { e.preventDefault(); $('dropHint').hidden = false; });
   stage.addEventListener('dragleave', () => { $('dropHint').hidden = true; });
   stage.addEventListener('drop', e => {
     e.preventDefault(); $('dropHint').hidden = true;
     const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    if (f && (f.type.startsWith('image/') || (BUILD === 'pages' && isPdf(f, f.name)))) loadBlob(f, f.name).catch(() => toast('这个文件打不开'));
+    if (f && (f.type.startsWith('image/') || (BUILD === 'pages' && isPdf(f, f.name)))) loadBlob(f, f.name).catch(() => toast(t('openFileFail')));
   });
 }
 
@@ -4539,27 +5165,25 @@ function offSave(st) { try { localStorage.setItem(offKey, JSON.stringify(st)); }
 /* the few words on the button: 在线加载, or which packs are on the device */
 function offLabel() {
   const st = offState(), have = Object.keys(FONT_PACKS).filter(k => st.packs[k] === 'done');
-  if (st.mode !== 'offline' || !have.length) return '在线加载';
-  return '离线 · ' + have.map(k => FONT_PACKS[k].name.replace('字体', '')).join('、');
+  if (st.mode !== 'offline' || !have.length) return t('onlineLabel');
+  return t('offlineLabel', { packs: have.map(k => packDisplayName(k)).join(t('listSep')) });
 }
 /* how much room the site takes up on the device, as far as the browser tells */
 async function offStore() {
-  let t = '';
+  let txt = '';
   try {
     if (navigator.storage && navigator.storage.estimate) {
       const e = await navigator.storage.estimate();
-      t = '本机已用 ' + mb(e.usage || 0) + (e.quota ? '，浏览器允许约 ' + mb(e.quota) : '');
+      txt = t('storageUsed', { used: mb(e.usage || 0), quota: e.quota ? t('storageQuota', { quota: mb(e.quota) }) : '' });
     }
-  } catch (e) { t = ''; }
-  $('offStore').textContent = t;
+  } catch (e) { txt = ''; }
+  $('offStore').textContent = txt;
 }
 /* draw the sheet: the two modes, the packs with their state, the download button */
 function offRender() {
   const st = offState(), off = st.mode === 'offline';
   $('modeOnline').setAttribute('aria-checked', String(!off)); $('modeOffline').setAttribute('aria-checked', String(off));
-  $('offDesc').textContent = off
-    ? '选好字体包下载到这台设备，之后不联网也能比对字体。没下载的字体会跳过，只用已下载的和手机自带的字体。'
-    : '字体用到哪款才从网上加载，不占手机空间，需要联网。识别和改字本身不用联网。';
+  $('offDesc').textContent = off ? t('offDescOffline') : t('offDescOnline');
   const list = $('packList');
   list.textContent = '';
   if (off) for (const k of Object.keys(FONT_PACKS)) {
@@ -4567,28 +5191,28 @@ function offRender() {
     const row = document.createElement('label'); row.className = 'pack';
     const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = s === 'done' || (!!OFF.sel[k] && s !== 'done'); cb.disabled = s === 'done' || !!OFF.busy;
     cb.onchange = () => { OFF.sel[k] = cb.checked; offRender(); };
-    const b = document.createElement('b'); b.textContent = p.name;
+    const b = document.createElement('b'); b.textContent = packDisplayName(k);
     const right = document.createElement('span');
-    if (s === 'done') { const d = document.createElement('button'); d.type = 'button'; d.className = 'del'; d.textContent = '删除'; d.disabled = !!OFF.busy; d.onclick = e => { e.preventDefault(); offDelete([k]); }; right.appendChild(d); }
+    if (s === 'done') { const d = document.createElement('button'); d.type = 'button'; d.className = 'del'; d.textContent = t('packDelete'); d.disabled = !!OFF.busy; d.onclick = e => { e.preventDefault(); offDelete([k]); }; right.appendChild(d); }
     const sm = document.createElement('small');
-    sm.textContent = (p.fams ? p.fams + ' 款，约 ' : '打开 PDF 时用的字符表、标准字体和图像解码，约 ') + mb(p.bytes) + (s === 'done' ? ' · 已下载' : s === 'part' && !busy ? ' · 没下载完，可继续' : busy ? ' · 下载中 ' + Math.round(OFF.busy.frac * 100) + '%' : '');
+    sm.textContent = (p.fams ? t('packFams', { n: p.fams, size: mb(p.bytes) }) : t('packPdfDesc', { size: mb(p.bytes) })) + (s === 'done' ? t('packDownloaded') : s === 'part' && !busy ? t('packPart') : busy ? t('packDownloading', { pct: Math.round(OFF.busy.frac * 100) }) : '');
     row.append(cb, b, right, sm);
     if (busy) { const bar = document.createElement('div'); bar.className = 'bar'; const i = document.createElement('i'); i.style.width = (OFF.busy.frac * 100).toFixed(1) + '%'; bar.appendChild(i); row.appendChild(bar); }
     list.appendChild(row);
   }
   const todo = Object.keys(FONT_PACKS).filter(k => OFF.sel[k] && st.packs[k] !== 'done');
   $('offGo').hidden = !off || (!todo.length && !OFF.busy);
-  $('offGo').textContent = OFF.busy ? '停止' : '下载所选（约 ' + mb(todo.reduce((a, k) => a + FONT_PACKS[k].bytes, 0)) + '）';
+  $('offGo').textContent = OFF.busy ? t('offGoStop') : t('offGoDownload', { size: mb(todo.reduce((a, k) => a + FONT_PACKS[k].bytes, 0)) });
   $('offlineState').textContent = offLabel();
   offStore();
 }
 /* fetch the ticked packs into the cache, eight files at a time. A pack that was interrupted carries on where it stopped. */
 async function offDownload() {
   const st = offState(), todo = Object.keys(FONT_PACKS).filter(k => OFF.sel[k] && st.packs[k] !== 'done');
-  if (!todo.length || !('caches' in window)) { if (!('caches' in window)) toast('这个浏览器不支持离线保存'); return; }
+  if (!todo.length || !('caches' in window)) { if (!('caches' in window)) toast(t('noCacheSupport')); return; }
   try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) { /* best effort */ }
   let list;
-  try { list = await (await fetch('fonts/packs.json', { cache: 'no-cache' })).json(); } catch (e) { toast('连不上网，没法下载字体包'); return; }
+  try { list = await (await fetch('fonts/packs.json', { cache: 'no-cache' })).json(); } catch (e) { toast(t('noNetworkPacks')); return; }
   const cache = await caches.open(OFF.cache), stop = { v: false };
   for (const k of todo) {
     const files = list[k].files, total = files.length;
@@ -4611,12 +5235,12 @@ async function offDownload() {
     };
     await Promise.all(Array.from({ length: 8 }, worker));
     if (stop.v) break;
-    if (failed) { toast(FONT_PACKS[k].name + ' 有 ' + failed + ' 个文件没下载成功，可以再点下载继续'); break; }
+    if (failed) { toast(t('packFailed', { pack: packDisplayName(k), n: failed })); break; }
     st.packs[k] = 'done'; offSave(st);
   }
   const stopped = stop.v;
   OFF.busy = null; offRender();
-  if (!stopped && Object.keys(FONT_PACKS).every(k => !OFF.sel[k] || offState().packs[k] === 'done')) toast('字体包已存到本机，可以离线使用了');
+  if (!stopped && Object.keys(FONT_PACKS).every(k => !OFF.sel[k] || offState().packs[k] === 'done')) toast(t('packsSaved'));
 }
 /* delete these packs from the device */
 async function offDelete(keys) {
@@ -4654,11 +5278,11 @@ function offInit() {
     const have = Object.keys(st.packs);
     if (have.length) {
       const size = have.reduce((a, k) => a + (FONT_PACKS[k] ? FONT_PACKS[k].bytes : 0), 0);
-      if (!window.confirm('切回在线会删除已下载到本机的字体（约 ' + mb(size) + '）。删除吗？')) return;
+      if (!window.confirm(t('confirmBackOnline', { size: mb(size) }))) return;
       await offDelete(Object.keys(FONT_PACKS));
     }
     const s2 = offState(); s2.mode = 'online'; s2.packs = {}; offSave(s2); offRender();
-    toast('已切回在线，本机字体已删除');
+    toast(t('backOnline'));
   };
   $('offGo').onclick = () => { if (OFF.busy) OFF.busy.stop.v = true; else offDownload(); };
   if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js').catch(() => {});
@@ -4723,7 +5347,7 @@ async function findReadPics() {
   const ok = await ocrLoad(t => { O.note = t; findRender(); });
   if (findCtx() !== P) return;
   O.note = '';
-  if (!ok) { O.state = 'none'; findRender(); toast('识别没能启动，请再试一次'); return; }
+  if (!ok) { O.state = 'none'; findRender(); toast(t('ocrFailed')); return; }
   for (let no = 1; no <= P.n && !O.stop; no++) {
     if (O.lines.has(no)) continue;
     let ctx = S.ictx, W = S.iw, H = S.ih, areas = null, base = [];
@@ -4793,35 +5417,35 @@ function findRender() {
   const P = findCtx(), box = $('findBox');
   box.hidden = !P || BUILD !== 'pages' || (P.isPic && !S.img);
   if (box.hidden) return;
-  const F = P.find, O = P.ocr, pic = P.isPic, info = $('findInfo'), few = a => (a.length > 8 ? a.slice(0, 8).join('、') + '…' : a.join('、'));
+  const F = P.find, O = P.ocr, pic = P.isPic, info = $('findInfo'), few = a => (a.length > 8 ? a.slice(0, 8).join(t('listSep')) + '…' : a.join(t('listSep')));
   /* reading the pictures is offered once, and only where there are pictures */
   const picPages = pic ? [1] : [...P.imgs.entries()].filter(e => e[1].length).map(e => e[0]).sort((a, b) => a - b), offer = O.state !== 'done' && picPages.length > 0;
   $('ocrRow').hidden = !offer;
   if (offer) {
-    $('ocrGo').textContent = O.state === 'run' ? '停止' : '识别图片里的文字';
-    $('ocrNote').textContent = O.state === 'run' ? O.note || (pic ? '正在识别图片里的文字…' : '正在识别第 ' + (O.at || picPages[0]) + ' 页的图片…') :
-      pic ? '图片里的字要先识别一次，才能查找。' : '第 ' + few(picPages) + ' 页有图片或扫描内容，里面的字要先识别一次，才能查到。';
+    $('ocrGo').textContent = O.state === 'run' ? t('ocrStop') : t('ocrGo');
+    $('ocrNote').textContent = O.state === 'run' ? ocrProgressText(O.note) || (pic ? t('ocrRunningPic') : t('ocrRunningPage', { n: O.at || picPages[0] })) :
+      pic ? t('ocrNeedPic') : t('ocrNeedPages', { pages: few(picPages) });
   }
-  $('findIn').placeholder = pic ? '查找图片里的文字' : '查找这份 PDF 里的文字';
+  $('findIn').placeholder = pic ? t('findPhPic') : t('findPhPdf');
   $('findIn').disabled = $('findGo').disabled = pic && O.state !== 'done';
   $('findNav').hidden = !(F && F.hits.length);
   info.hidden = !F;
   if (!F) return;
   const n = F.hits.length, left = findLeft();
   if (!n) {
-    info.textContent = !F.done ? '正在查找… 已查 ' + F.pages + ' / ' + P.n + ' 页' : '没有找到“' + F.q + '”。' +
-      (offer ? '图片和扫描页里的字，要先点下面的“识别图片里的文字”。' : pic || O.state === 'done' ? '识别不出来的字（手写、艺术字、太模糊的）查不到，跨行的词句也查不到。' : '跨行的词句查不到。');
+    info.textContent = !F.done ? t('findSearching', { done: F.pages, total: P.n }) : t('findNone', { q: F.q }) +
+      (offer ? t('findNoneOcrHint') : pic || O.state === 'done' ? t('findNoneUnreadable') : t('findNoneCrossLine'));
     return;
   }
   const pages = [...new Set(F.hits.map(h => h.no))];
   info.innerHTML = '';
   const b = document.createElement('b');
-  b.textContent = (F.done ? '共 ' : '已找到 ') + n + ' 处';
-  info.append(b, (pic ? '' : '（第 ' + few(pages) + ' 页）') + (F.done ? '' : '，还在查 ' + F.pages + ' / ' + P.n + ' 页') + '。' +
-    (left === n ? '都还没改。' : left > 0 ? '已改 ' + (n - left) + ' 处，还剩 ' + left + ' 处。' : '全部改过了。') + (F.at >= 0 ? ' 现在是第 ' + (F.at + 1) + ' 处。' : '') +
-    (F.hits.some(h => h.ocr) || (O.state === 'done' && [...O.lines.values()].some(l => l.length)) ? ' 图片里的字是识别出来的，可能有错漏，请再人工核对一遍。' : '') +
-    (offer && !pic ? ' 图片和扫描页还没识别。' : ''));
-  $('findNext').textContent = left > 0 ? '下一处' : '再看一遍';
+  b.textContent = F.done ? t('findFoundTotal', { n }) : t('findFoundSoFar', { n });
+  info.append(b, (pic ? '' : t('findOnPages', { pages: few(pages) })) + (F.done ? '' : t('findStillSearching', { done: F.pages, total: P.n })) +
+    (left === n ? t('findAllUnchanged') : left > 0 ? t('findChangedSome', { done: n - left, left, n }) : t('findAllChanged')) + (F.at >= 0 ? t('findCurrentHit', { i: F.at + 1 }) : '') +
+    (F.hits.some(h => h.ocr) || (O.state === 'done' && [...O.lines.values()].some(l => l.length)) ? t('findOcrWarning') : '') +
+    (offer && !pic ? t('findOcrNotDone') : ''));
+  $('findNext').textContent = left > 0 ? t('nextHit') : t('reviewAgain');
 }
 /* go to the next occurrence that has not been edited (when all have been: just the next one) and select it */
 async function findStep(dir) {
@@ -4998,14 +5622,14 @@ function pdfOpenDoc(lib, bytes, askPassword) {
 
 /* open a PDF the user picked; it takes the place of whatever is open */
 async function openPdf(blob, name) {
-  if (BUILD !== 'pages') { toast('这个版本只能打开图片；PDF 请用网页版'); return; }
-  $('stageNote').textContent = '正在打开 PDF…';
+  if (BUILD !== 'pages') { toast(t('artifactOnlyPdf')); return; }
+  $('stageNote').textContent = t('openingPdf');
   let lib, doc, pw = null;
   const bytes = new Uint8Array(await blob.arrayBuffer());
-  try { lib = await pdfLib(); } catch (e) { $('stageNote').textContent = ''; toast('PDF 组件没加载成功，请联网后再试一次'); return; }
+  try { lib = await pdfLib(); } catch (e) { $('stageNote').textContent = ''; toast(t('pdfLibFail')); return; }
   try {
-    doc = await pdfOpenDoc(lib, bytes, (reason, n) => (pw = window.prompt(n ? '密码不对，请再输入一次' : '这个 PDF 设了打开密码，请输入')));
-  } catch (e) { $('stageNote').textContent = ''; toast(pw != null || /password/i.test(String(e && e.name)) ? '没有密码，打不开这个 PDF' : '这个 PDF 打不开，文件可能已损坏'); return; }
+    doc = await pdfOpenDoc(lib, bytes, (reason, n) => (pw = window.prompt(n ? t('pdfPwWrong') : t('pdfPwAsk'))));
+  } catch (e) { $('stageNote').textContent = ''; toast(pw != null || /password/i.test(String(e && e.name)) ? t('pdfNoPw') : t('pdfDamaged')); return; }
   if (S.pdf) pdfDestroy(S.pdf.doc);
   if (S.edit) dropEdit();
   pdfDropFonts();
@@ -5088,7 +5712,7 @@ async function pdfGo(no) {
   if (S.edit) { if (S.edit.live && S.edit.newText !== S.edit.origText) commit('text', true); else dropEdit(); }
   pdfStash();
   P.busy = true;
-  $('stageNote').textContent = '正在打开第 ' + no + ' 页…';
+  $('stageNote').textContent = t('openingPage', { n: no });
   try {
     const r = await pdfRender(no);
     if (S.pdf !== P) return;
@@ -5100,8 +5724,8 @@ async function pdfGo(no) {
     PDFS.out = null;
     findRender();
     requestDraw();
-  } catch (e) { toast('第 ' + no + ' 页没能显示出来'); }
-  finally { P.busy = false; pdfPager(); if ($('stageNote').textContent.startsWith('正在打开')) $('stageNote').textContent = ''; }
+  } catch (e) { toast(t('pageShowFail', { n: no })); }
+  finally { P.busy = false; pdfPager(); if ($('stageNote').textContent.startsWith(t('openingPrefix'))) $('stageNote').textContent = ''; }
 }
 /* the page number between its two arrows */
 function pdfPager() {
@@ -5181,7 +5805,7 @@ function pdfNoteFont(P, id, f, glyphs) {
   let fam = P.fonts.get(id);
   if (!fam) {
     const hint = pdfFontHint(f.name) || { label: id, weight: 400, italic: false };
-    fam = { n: 'pdf:' + id, label: 'PDF 自带 · ' + hint.label, c: f.isMonospace ? 'm' : f.isSerifFont ? 'r' : 's', w: [hint.weight], it: 0, tier: 0, sc: '', sys: true, cjk: true,
+    fam = { n: 'pdf:' + id, label: t('pdfOwnLabel', { label: hint.label }), c: f.isMonospace ? 'm' : f.isSerifFont ? 'r' : 's', w: [hint.weight], it: 0, tier: 0, sc: '', sys: true, cjk: true,
       pdf: { id, css: (f.systemFontInfo && f.systemFontInfo.css) || '"' + (f.loadedName || id) + '", ' + (f.fallbackName || 'sans-serif'), fs: f.italic ? 'italic' : 'normal', fw: f.black ? '900' : f.bold ? 'bold' : 'normal', map: new Map(), whole: !!f.systemFontInfo, fo: f } };
     P.fonts.set(id, fam); FAM.set(fam.n, fam);
     PDFS.famDirty = true;
@@ -5219,15 +5843,15 @@ function pdfFontFor(ed) {
     /* a font that can be put into the file keeps the new text real text; a device font would make it a picture */
     const others = ed.cands.filter(r => !r.fam.pdf && !r.rough), emb = others.find(r => pdfEmbeddable(r.fam));
     const alt = emb && emb.score >= others[0].score - 0.1 ? emb : others[0];
-    const what = 'PDF 自带的字体里没有“' + Array.from(miss).slice(0, 8).join('') + '”';
-    if (!alt) { setStatus(what + '，这几个字会用别的字体显示。可以在“微调”里换一款字体。', true); return; }
+    const what = t('pdfMissingFont', { chars: Array.from(miss).slice(0, 8).join('') });
+    if (!alt) { setStatus(what + t('pdfMissingAlt'), true); return; }
     ed.pdfAlt = true;
     adopt(alt, true); renderCands();
-    setStatus(what + '，新文字改用最接近的字体：' + famLabel(alt.fam) + '。', true);
+    setStatus(what + t('pdfMissingSwitch', { font: famLabel(alt.fam) }), true);
   } else if (ed.pdfAlt && !miss && st.fam !== own.fam) {
     ed.pdfAlt = false;
     adopt(own, true); renderCands();
-    setStatus('新文字用的是 PDF 自带的字体，和原文一致。');
+    setStatus(t('pdfOwnFont'));
   }
 }
 
@@ -5235,7 +5859,7 @@ function pdfFontFor(ed) {
 function pdfFontNote(ed) {
   if (!S.pdf || BUILD !== 'pages' || ed.st.fam.pdf || pdfEmbeddable(ed.st.fam)) return;
   const el = $('matchStatus');
-  setStatus((el.textContent ? el.textContent + ' ' : '') + '这款是设备自带的字体，放不进 PDF：保存后这处是贴上去的图片。想要真正的文字，可以在“微调”里换一款字体库里的字体。', el.classList.contains('warn'));
+  setStatus((el.textContent ? el.textContent + ' ' : '') + t('pdfDeviceFontNote'), el.classList.contains('warn'));
 }
 
 /* ---------- the library's fonts: can a family go into the file, and which characters do its files have ---------- */
@@ -5297,19 +5921,19 @@ async function pdfUncovered(fam, weight, italic, t) {
 /* the new text has characters the library font in use cannot draw: change to the closest font that has them all
    (text in a font with gaps is drawn partly in some other font, and is saved as a picture) */
 async function pdfCoverNote(ed) {
-  const st = ed.st, t = ed.newText, fam = st.fam;
+  const st = ed.st, txt = ed.newText, fam = st.fam;
   if (!S.pdf || BUILD !== 'pages' || fam.pdf || !pdfEmbeddable(fam) || !t) return;
-  const miss = await pdfUncovered(fam, st.weight, st.italic, t), same = () => S.edit === ed && ed.newText === t && ed.st.fam === fam;
+  const miss = await pdfUncovered(fam, st.weight, st.italic, txt), same = () => S.edit === ed && ed.newText === txt && ed.st.fam === fam;
   if (!same() || !miss) return;
-  const what = '“' + famLabel(fam) + '”里没有“' + Array.from(miss).slice(0, 8).join('') + '”';
+  const what = t('pdfMissingInFont', { font: famLabel(fam), chars: Array.from(miss).slice(0, 8).join('') });
   if (!st.famUser) for (const r of ed.cands) {
-    if (r.rough || r.fam === fam || r.fam.pdf || !pdfEmbeddable(r.fam) || (await pdfUncovered(r.fam, r.weight, r.italic, t + ed.origText))) continue;
+    if (r.rough || r.fam === fam || r.fam.pdf || !pdfEmbeddable(r.fam) || (await pdfUncovered(r.fam, r.weight, r.italic, txt + ed.origText))) continue;
     if (!same()) return;
     adopt(r, true); renderCands();
-    setStatus(what + '，新文字改用最接近的字体：' + famLabel(r.fam) + '。', true);
+    setStatus(what + t('pdfMissingSwitch', { font: famLabel(r.fam) }), true);
     return;
   }
-  if (same()) setStatus(what + '，这几个字会用别的字体显示，保存后这处是贴上去的图片。可以在“微调”里换一款字体。', true);
+  if (same()) setStatus(what + t('pdfMissingPic'), true);
 }
 
 /* ---------- fitting ---------- */
@@ -5903,26 +6527,27 @@ async function pdfBuildOnce(flat, force, allPic) {
    sharing or download. And pdfInit(): the page buttons and whatever else only the installable build has.
    ===================================================================== */
 /* why an edit went into the file as a picture and not as text. The keys are set in edit.js, write.js and build.js. */
-const PDF_WHY = {
-  image: '那里不是 PDF 文字（扫描件或图片里的字）', nested: '旧文字在嵌套的对象里', hidden: '那里是扫描件上的隐藏文字层', strip: '旧文字的写法特殊，没法干净地去掉', ops: '页面内容的结构特殊',
-  annot: '改动处有批注或表单域', overlap: '和另一处改动重叠', sysfont: '新文字用的是设备自带的字体，放不进 PDF', synth: '用到了字体本身没有的粗体或斜体', glyph: '字体里缺少要用的字',
-  file: '字体文件没取到（离线时需要先下载字体包）', font: '选的是其它页的字体', script: '新文字需要连写排版', soft: '原文字边缘是虚的', look: '写成文字后和屏幕上的样子对不上'
-};
+/* why an edit went into the file as a picture and not as text, in the language in use now.
+   (The keys are set in edit.js, write.js and build.js; an unknown key is shown as itself.) */
+function pdfWhy(k) {
+  const key = { image: 'whyImage', nested: 'whyNested', hidden: 'whyHidden', strip: 'whyStrip', ops: 'whyOps', annot: 'whyAnnot', overlap: 'whyOverlap', sysfont: 'whySysfont', synth: 'whySynth', glyph: 'whyGlyph', file: 'whyFile', font: 'whyFont', script: 'whyScript', soft: 'whySoft', look: 'whyLook' }[k];
+  return key ? t(key) : k;
+}
 /* the report of pdfBuild() in words, for the save sheet */
 function pdfReportText(r) {
-  const pl = a => '第 ' + a.join('、') + ' 页';
-  if (r.whole) return (r.why === 'protected' ? '这个 PDF 有保护，不能在原文件上改。' : '这个 PDF 的内部结构比较特别，没法在原文件上改。') + '已另存为新文件：每一页都转成了图片，文字不能再选中或搜索。';
-  if (r.flat) return pl(r.pages) + '已整页转成图片：旧文字不在文件里了，这些页上的文字也不能再选中或搜索。其它页没有变。';
-  let t = '改动在' + pl(r.pages) + '。';
-  const whys = Object.keys(r.why).map(k => PDF_WHY[k] || k);
-  if (r.text && !r.pics) t += '新文字是真正的文字，已写进 PDF，可以选中、搜索和复制；其它内容没有变。';
-  else if (r.text) t += '其中 ' + r.text + ' 处的新文字是真正的文字，可以选中、搜索和复制；另外 ' + r.pics + ' 处是贴上去的图片（' + whys.join('；') + '）。';
-  else t += '新文字是贴上去的图片（' + r.dpi + ' dpi），不能选中或搜索' + (whys.length ? '：' + whys.join('；') : '') + '。其它内容没有变。';
-  if (r.covered) t += ' 注意：' + pl(r.coveredPages) + '有 ' + r.covered + ' 个旧字没能从文件里去掉，只是被盖住了，搜索或复制还能找到。要彻底去掉，请勾选下面的“整页转成图片”。';
-  else if (!r.checked) t += ' 没能复查旧文字是否去净；要保险，请勾选下面的“整页转成图片”。';
-  else t += ' 已复查：被替换的旧文字已从文件里去掉，搜索和复制都找不到了。';
-  if (r.annots) t += ' 改动处原有的 ' + r.annots + ' 个批注或表单域已并入页面。';
-  return t;
+  const pl = a => t('pagesList', { pages: a.join(t('listSep')) });
+  if (r.whole) return (r.why === 'protected' ? t('reportWholeProtected') : t('reportWholeUnusual')) + t('reportWholeSuffix');
+  if (r.flat) return t('reportFlat', { pages: pl(r.pages) });
+  let out = t('reportStart', { pages: pl(r.pages) });
+  const whys = Object.keys(r.why).map(k => pdfWhy(k));
+  if (r.text && !r.pics) out += t('reportTextOnly');
+  else if (r.text) out += t('reportTextAndPics', { text: r.text, pics: r.pics, whys: whys.join(t('listSepSemi')) });
+  else out += t('reportPicsOnly', { dpi: r.dpi, whys: whys.length ? t('reportWhys', { whys: whys.join(t('listSepSemi')) }) : '' });
+  if (r.covered) out += t('reportCovered', { pages: pl(r.coveredPages), n: r.covered });
+  else if (!r.checked) out += t('reportUnchecked');
+  else out += t('reportChecked');
+  if (r.annots) out += t('reportAnnots', { n: r.annots });
+  return out;
 }
 
 /* the save button, with a PDF open: build the file and show the sheet */
@@ -5931,32 +6556,32 @@ async function pdfSave() {
   if (!P || PDFS.saving) return;
   if (S.edit && S.edit.live) commit('text', true);
   pdfStash();
-  if (![...P.pages.values()].some(pg => pg.edits.length)) { toast('这份 PDF 还没有改动'); return; }
+  if (![...P.pages.values()].some(pg => pg.edits.length)) { toast(t('pdfNoEdits')); return; }
   const flat = $('pdfFlat').checked;
   PDFS.saving = true;
-  $('sheetTitle').textContent = '保存 PDF'; $('saveNote').textContent = '修改后的文件请合法使用，后果由使用者自负。';
-  $('sheetHow').textContent = '正在生成 PDF…';
+  $('sheetTitle').textContent = t('savePdfTitle'); $('saveNote').textContent = t('saveNotePdf');
+  $('sheetHow').textContent = t('pdfGenerating');
   $('pdfOpts').hidden = false; $('sheetImg').parentElement.hidden = true;
   $('sheetShare').hidden = true; $('sheetLink').hidden = true;
   $('sheet').hidden = false;
   try {
     const out = await pdfBuild(flat);
-    const blob = new Blob([out.bytes], { type: 'application/pdf' }), filename = P.name + '-改字.pdf';
+    const blob = new Blob([out.bytes], { type: 'application/pdf' }), filename = P.name + t('fileSuffix') + '.pdf';
     if (PDFS.out) URL.revokeObjectURL(PDFS.out.url);
     PDFS.out = { url: URL.createObjectURL(blob), report: out.report, size: blob.size };
     const fl = findLeft();
-    $('sheetHow').textContent = pdfReportText(out.report) + '（' + mb(blob.size) + '）' + (fl > 0 ? ' 提醒：查找的“' + P.find.q + '”还有 ' + fl + ' 处没改。' : '');
+    $('sheetHow').textContent = pdfReportText(out.report) + t('reportSize', { size: mb(blob.size) }) + (fl > 0 ? t('saveLeft', { q: P.find.q, left: fl }) : '');
     if (out.report.whole) { $('pdfFlat').checked = true; $('pdfFlat').disabled = true; }
     const file = typeof File === 'function' ? new File([blob], filename, { type: 'application/pdf' }) : null;
     let share = false;
     try { share = !!(file && navigator.canShare && navigator.canShare({ files: [file] })); } catch (e) { share = false; }
-    $('sheetShare').hidden = !share; $('sheetShare').textContent = '存到“文件” / 分享';
+    $('sheetShare').hidden = !share; $('sheetShare').textContent = t('sharePdf');
     $('sheetShare').onclick = () => { navigator.share({ files: [file], title: filename }).catch(() => {}); };
-    $('sheetLink').hidden = window.self !== window.top; $('sheetLink').textContent = '下载 PDF';
+    $('sheetLink').hidden = window.self !== window.top; $('sheetLink').textContent = t('downloadPdf');
     $('sheetLink').href = PDFS.out.url; $('sheetLink').download = filename;
   } catch (e) {
     const m = String((e && e.message) || e);
-    $('sheetHow').textContent = m === 'protected' ? '这个 PDF 有保护，超过 40 页，没法整份另存成图片。可以先用其它工具去掉保护再来。' : m === 'unreadable' ? '这个 PDF 的内部结构比较特别，超过 40 页，没法整份另存成图片。' : '生成 PDF 时出错了（' + m.slice(0, 80) + '）。可以勾选“整页转成图片”再试一次。';
+    $('sheetHow').textContent = m === 'protected' ? t('pdfSaveProtected') : m === 'unreadable' ? t('pdfSaveUnreadable') : t('pdfSaveError', { msg: m.slice(0, 80) });
   } finally { PDFS.saving = false; }
 }
 
@@ -5964,11 +6589,11 @@ async function pdfSave() {
 function pdfInit() {
   if (BUILD !== 'pages') return;
   $('fileInput').accept = 'image/*,application/pdf,.pdf';
-  $('btnOpen').textContent = '打开图片 / PDF';
-  $('dropHint').textContent = '松开，打开这个文件';
+  $('btnOpen').textContent = t('openImagePdf');
+  $('dropHint').textContent = t('dropHintPdf');
   $('pgPrev').onclick = () => { if (S.pdf) pdfGo(S.pdf.cur - 1); };
   $('pgNext').onclick = () => { if (S.pdf) pdfGo(S.pdf.cur + 1); };
-  $('pgNum').onclick = () => { const P = S.pdf; if (!P || P.n < 2) return; const v = window.prompt('跳到第几页？（1 – ' + P.n + '）', String(P.cur)); if (v != null && +v >= 1) pdfGo(+v); };
+  $('pgNum').onclick = () => { const P = S.pdf; if (!P || P.n < 2) return; const v = window.prompt(t('goToPagePrompt', { n: P.n }), String(P.cur)); if (v != null && +v >= 1) pdfGo(+v); };
   $('pdfFlat').onchange = () => { PDFS.out = null; pdfSave(); };
   for (const el of [$('pgPrev'), $('pgNext'), $('pgNum')]) el.addEventListener('pointerdown', e => e.stopPropagation());
 }
@@ -5983,6 +6608,7 @@ function boot() {
   detectSystemFonts();
   new ResizeObserver(resizeView).observe(stage);
   resizeView();
+  langInit();
   makeDemo();
   /* inside Claude the page may ask for two capabilities: saving a file, and having Claude read the text of a selection.
      Anywhere else window.claude does not exist, and the page saves and reads by itself. */

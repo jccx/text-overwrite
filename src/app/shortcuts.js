@@ -14,13 +14,13 @@ function shortcutsInit() {
   window.addEventListener('keyup', e => { if (e.key === ' ') S.space = false; });
   window.addEventListener('paste', e => {
     const items = (e.clipboardData && e.clipboardData.items) || [];
-    for (const it of items) if (it.kind === 'file' && it.type.startsWith('image/')) { const f = it.getAsFile(); if (f) { e.preventDefault(); loadBlob(f, '粘贴的图片').catch(() => toast('这张图片打不开')); } return; }
+    for (const it of items) if (it.kind === 'file' && it.type.startsWith('image/')) { const f = it.getAsFile(); if (f) { e.preventDefault(); loadBlob(f, t('pastedImage')).catch(() => toast(t('openImageFail'))); } return; }
   });
   stage.addEventListener('dragover', e => { e.preventDefault(); $('dropHint').hidden = false; });
   stage.addEventListener('dragleave', () => { $('dropHint').hidden = true; });
   stage.addEventListener('drop', e => {
     e.preventDefault(); $('dropHint').hidden = true;
     const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
-    if (f && (f.type.startsWith('image/') || (BUILD === 'pages' && isPdf(f, f.name)))) loadBlob(f, f.name).catch(() => toast('这个文件打不开'));
+    if (f && (f.type.startsWith('image/') || (BUILD === 'pages' && isPdf(f, f.name)))) loadBlob(f, f.name).catch(() => toast(t('openFileFail')));
   });
 }

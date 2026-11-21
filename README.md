@@ -1,5 +1,7 @@
 # Text Overwrite · 查缺补漏
 
+**Language:** the interface defaults to English. Tap **中文** in the header to switch to Chinese, and **English** to switch back; your choice is remembered on the device. The interface is fully bilingual (English / 中文).
+
 Replace text inside an image or a PDF while keeping it looking the same: the new text gets the original font, weight, size, letter spacing, colour and position, and the background under the old text is filled back in. Chinese, English and mixed text.
 
 **Use it:** https://jccx.github.io/text-overwrite/ — on iPhone, open it in Safari, then Share → *Add to Home Screen* to use it like an app.
