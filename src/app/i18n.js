@@ -15,6 +15,11 @@
    and CJK measurement strings are data, not interface, and stay as is.
    ===================================================================== */
 const I18N_LANG_KEY = 'overwrite.lang';
+/* when this build was made (UTC). Shown at the end of the privacy sheet in the reader's local time, to the minute. Update on every push, or the line goes stale. */
+const APP_BUILD_TIME = '2026-11-21T05:48:00Z';
+function buildTimeLocal() {
+  try { return new Date(APP_BUILD_TIME).toLocaleString(undefined, {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'}); } catch (e) { return APP_BUILD_TIME; }
+}
 const I18N = {
   "en": {
     "appTitle": "Text Overwrite",
@@ -114,6 +119,7 @@ const I18N = {
     "privH3": "Responsibility for use",
     "privP5": "Lawful use only. How edited images and files are used, and any consequences, are your responsibility. Do not use it to forge or alter IDs, receipts, contracts, chat records, screenshot evidence or anything else, or to infringe other people’s rights.",
     "privP6": "Provided “as is”, with no guarantee that recognition, font matching or edits are accurate; the developers are not liable for any loss or legal responsibility from its use.",
+    "privUpdated": "Last updated: {time}",
     "gotIt": "Got it",
     "saveImageTitle": "Save image",
     "savePdfTitle": "Save PDF",
@@ -386,6 +392,7 @@ const I18N = {
     "privH3": "使用责任",
     "privP5": "本工具仅供合法用途。修改后的图片和文件如何使用、由此产生的一切后果，由使用者自行负责。请勿用于伪造或篡改证件、票据、合同、聊天记录、截图证据等，或侵犯他人权利。",
     "privP6": "本工具按“现状”提供，不保证识别、字体匹配或修改结果准确；开发者不对因使用本工具造成的任何损失或法律责任负责。",
+    "privUpdated": "最后更新：{time}",
     "gotIt": "知道了",
     "saveImageTitle": "保存图片",
     "savePdfTitle": "保存 PDF",
@@ -598,6 +605,8 @@ function setLang(lang) {
   for (const el of document.querySelectorAll('[data-i18n-ph]')) el.placeholder = t(el.dataset.i18nPh);
   for (const el of document.querySelectorAll('[data-i18n-aria]')) el.setAttribute('aria-label', t(el.dataset.i18nAria));
   for (const el of document.querySelectorAll('[data-i18n-alt]')) el.alt = t(el.dataset.i18nAlt);
+  const pu = $('privUpdated');
+  if (pu) pu.textContent = t('privUpdated', {time: buildTimeLocal()});
   /* the installable build opens PDFs too, so its open / drop-hint wording differs from the artifact's */
   if (typeof BUILD !== 'undefined' && BUILD === 'pages') {
     $('btnOpen').textContent = t('openImagePdf');
