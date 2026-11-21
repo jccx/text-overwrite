@@ -48,7 +48,7 @@
   <aside id="panel" class="panel">
     <section id="pIdle" class="idle">
       <div id="findBox" class="find" hidden>
-        <div class="find-in"><input id="findIn" type="search" enterkeyhint="search" data-i18n-ph="findPhPdf" data-i18n-aria="findPhPdf" placeholder="Search the text in this PDF" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search the text in this PDF"><button type="button" id="findGo" class="btn" data-i18n="find">Search</button></div>
+        <div class="find-in"><input id="findIn" type="search" enterkeyhint="search" data-i18n-ph="findPhPdf" data-i18n-aria="findPhPdf" placeholder="Search this PDF" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Search this PDF"><button type="button" id="findGo" class="btn" data-i18n="find">Search</button></div>
         <p id="findInfo" class="find-info" hidden></p>
         <div id="findNav" class="find-nav" hidden><button type="button" id="findPrev" class="btn" data-i18n="prevHit">Previous occurrence</button><button type="button" id="findNext" class="btn primary" data-i18n="nextHit">Next occurrence</button></div>
         <div id="ocrRow" class="ocr-row" hidden><span id="ocrNote"></span><button type="button" id="ocrGo" class="btn" data-i18n="ocrGo">Recognise the text in images</button></div>
@@ -67,13 +67,13 @@
       <div class="field">
         <label for="inOrig"><span data-i18n="origLabel">Original text</span><small data-i18n="origHint">what the picture says now</small></label>
         <div class="row">
-          <textarea id="inOrig" rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="origPh" placeholder="Type what the picture says, to match the font"></textarea>
+          <textarea id="inOrig" rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="origPh" placeholder="Type the original text"></textarea>
           <button type="button" id="btnOcr" class="btn" hidden data-i18n="ocrRead">Recognise</button>
         </div>
       </div>
       <div class="field">
         <label for="inNew" data-i18n="newLabel">New text</label>
-        <textarea id="inNew" rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="newPh" placeholder="What to change it to"></textarea>
+        <textarea id="inNew" rows="1" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="newPh" placeholder="Type the new text"></textarea>
       </div>
 
       <div class="spec" id="spec">
